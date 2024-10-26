@@ -42,6 +42,9 @@
           <template #header>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
+                <el-button type="primary" icon="Plus" @click="handleAdd()">添加</el-button>
+              </el-col>
+              <el-col :span="1.5">
                 <el-button type="danger" icon="Delete" :disabled="multiple" @click="handleDelete()">删除</el-button>
               </el-col>
               <el-col :span="1.5">
@@ -79,7 +82,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" align="center" width="220" class-name="small-padding fixed-width">
+            <el-table-column fixed="right" label="操作" align="center" width="250" class-name="small-padding fixed-width">
               <template #default="scope">
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
@@ -104,9 +107,16 @@
                       历史版本
                     </el-button>
                   </el-col>
-                  <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-                  </el-col>
+                  <el-button
+                    v-if="scope.row.isPublish === 0 || scope.row.isPublish === 9"
+                    link
+                    type="primary"
+                    size="small"
+                    icon="CircleCheck"
+                    @click="handlePublish(scope.row)"
+                    >发布流程</el-button
+                  >
+                  <el-button v-else link type="primary" size="small" icon="CircleClose" @click="handleUnPublish(scope.row)">取消发布</el-button>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
@@ -114,6 +124,9 @@
                   </el-col>
                   <el-col :span="1.5">
                     <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
+                  </el-col>
+                  <el-col :span="1.5">
+                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -255,6 +268,36 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增流程定义 -->
+    <el-dialog v-model="modelDialog.visible" :title="modelDialog.title" width="650px" append-to-body :close-on-click-modal="false">
+      <template #footer>
+        <el-form ref="defFormRef" :model="form" :rules="rules" label-width="110px">
+          <el-form-item label="流程类别" prop="category">
+            <el-tree-select
+              v-model="form.category"
+              :data="categoryOptions"
+              :props="{ value: 'categoryCode', label: 'categoryName', children: 'children' }"
+              filterable
+              value-key="categoryCode"
+              :render-after-expand="false"
+              check-strictly
+              style="width: 100%"
+            />
+          </el-form-item>
+          <el-form-item label="流程编码" prop="flowCode">
+            <el-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" show-word-limit />
+          </el-form-item>
+          <el-form-item label="流程名称" prop="flowName">
+            <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit />
+          </el-form-item>
+        </el-form>
+        <div class="dialog-footer">
+          <el-button @click="modelDialog.visible = false">取消</el-button>
+          <el-button type="primary" @click="handleAddSubmit">保存</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -267,13 +310,14 @@ import {
   importDefinition,
   getHisListByKey,
   publish,
-  unPublish
+  unPublish,
+  add
 } from '@/api/workflow/definition';
 import { getByTableNameNotDefId, getByDefId, saveOrUpdate } from '@/api/workflow/definitionConfig';
 import ProcessPreview from './components/processPreview.vue';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
-import { ProcessDefinitionQuery, FlowDefinitionVo } from '@/api/workflow/definition/types';
+import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { DefinitionConfigForm } from '@/api/workflow/definitionConfig/types';
 import { UploadRequestOptions, ElMessage, ElMessageBox } from 'element-plus';
 
@@ -303,9 +347,9 @@ const processDefinitionList = ref<FlowDefinitionVo[]>([]);
 const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
-const disabled = ref(true);
 /** 部署文件分类选择 */
 const selectCategory = ref();
+const defFormRef = ref<ElFormInstance>();
 
 const uploadDialog = reactive<DialogOption>({
   visible: false,
@@ -322,16 +366,30 @@ const definitionConfigDialog = reactive<DialogOption>({
   title: '流程定义配置'
 });
 
+const modelDialog = reactive<DialogOption>({
+  visible: false,
+  title: '新增流程'
+});
+
 // 查询参数
-const queryParams = ref<ProcessDefinitionQuery>({
+const queryParams = ref<FlowDefinitionQuery>({
   pageNum: 1,
   pageSize: 10,
   name: undefined,
   key: undefined,
-  categoryCode: undefined,
-  isPublish: 1
+  categoryCode: undefined
 });
-
+const rules = {
+  category: [{ required: true, message: '分类名称不能为空', trigger: 'blur' }],
+  flowName: [{ required: true, message: '流程定义名称不能为空', trigger: 'blur' }],
+  flowCode: [{ required: true, message: '流程定义编码不能为空', trigger: 'blur' }]
+};
+//新增流程定义参数
+const form = ref<FlowDefinitionForm>({
+  flowName: '',
+  flowCode: '',
+  category: ''
+});
 onMounted(() => {
   getList();
   getTreeselect();
@@ -449,6 +507,7 @@ const handleUnPublish = async (row?: FlowDefinitionVo) => {
   loading.value = true;
   await unPublish(row.id).finally(() => (loading.value = false));
   await getList();
+  processDefinitionDialog.visible = false;
   proxy?.$modal.msgSuccess('取消发布成功');
 };
 /** 挂起/激活 */
@@ -536,11 +595,35 @@ const handlerSaveForm = async () => {
     }
   });
 };
+/**
+ * 设计流程
+ * @param row
+ */
 const design = async (row: FlowDefinitionVo) => {
   proxy.$router.push({
     path: `/workflow/design/index`,
     query: {
       definitionId: row.id
+    }
+  });
+};
+/**
+ * 新增
+ */
+const handleAdd = async () => {
+  modelDialog.visible = true;
+};
+//保存
+const handleAddSubmit = async () => {
+  defFormRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      add(form.value).then((resp) => {
+        if (resp.code === 200) {
+          proxy?.$modal.msgSuccess('操作成功');
+          modelDialog.visible = false;
+          getList();
+        }
+      });
     }
   });
 };

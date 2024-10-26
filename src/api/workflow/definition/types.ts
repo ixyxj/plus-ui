@@ -1,5 +1,5 @@
 import { DefinitionConfigVO } from '@/api/workflow/definitionConfig/types';
-export interface ProcessDefinitionQuery extends PageQuery {
+export interface FlowDefinitionQuery extends PageQuery {
   key?: string;
   name?: string;
   categoryCode?: string;
@@ -16,6 +16,12 @@ export interface FlowDefinitionVo extends BaseEntity {
   createTime: Date;
   updateTime: Date;
   wfDefinitionConfigVo: DefinitionConfigVO;
+}
+
+export interface FlowDefinitionForm {
+  flowName: string;
+  flowCode: string;
+  category: string;
 }
 
 export interface definitionXmlVO {

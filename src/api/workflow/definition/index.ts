@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { definitionQuery, definitionVO, definitionXmlVO } from '@/api/workflow/definition/types';
+import { definitionQuery, definitionVO, definitionXmlVO, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { AxiosPromise } from 'axios';
 
 /**
@@ -110,5 +110,18 @@ export const xmlString = (id: string) => {
   return request({
     url: `/workflow/definition/xmlString/${id}`,
     method: 'get'
+  });
+};
+
+/**
+ * 新增
+ * @param data 参数
+ * @returns
+ */
+export const add = (data: FlowDefinitionForm) => {
+  return request({
+    url: `/workflow/definition`,
+    method: 'post',
+    data: data
   });
 };
