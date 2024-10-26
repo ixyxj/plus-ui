@@ -178,15 +178,15 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/workflow/modelDesign',
+    path: '/workflow/design',
     component: Layout,
     hidden: true,
     permissions: ['workflow:leave:edit'],
     children: [
       {
         path: 'index',
-        component: () => import('@/views/workflow/processDefinition/modelDesign.vue'),
-        name: 'modelDesign',
+        component: () => import('@/views/workflow/processDefinition/design.vue'),
+        name: 'design',
         meta: { title: '请假申请', activeMenu: '/workflow/processDefinition', noCache: true }
       }
     ]

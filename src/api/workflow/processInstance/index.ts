@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
 import { AxiosPromise } from 'axios';
+import { number } from 'vue-types';
 
 /**
  * 查询运行中实例列表
@@ -31,9 +32,9 @@ export const getPageByFinish = (query: ProcessInstanceQuery): AxiosPromise<Proce
 /**
  * 通过业务id获取历史流程图
  */
-export const getHistoryImage = (businessKey: string) => {
+export const getFlowImage = (businessKey: string | number) => {
   return request({
-    url: `/workflow/processInstance/getHistoryImage/${businessKey}` + '?t' + Math.random(),
+    url: `/workflow/processInstance/getFlowImage/${businessKey}` + '?t' + Math.random(),
     method: 'get'
   });
 };
@@ -44,18 +45,6 @@ export const getHistoryImage = (businessKey: string) => {
 export const getHistoryList = (businessKey: string): AxiosPromise<Record<string, any>> => {
   return request({
     url: `/workflow/processInstance/getHistoryList/${businessKey}` + '?t' + Math.random(),
-    method: 'get'
-  });
-};
-
-/**
- * 获取审批记录
- * @param businessKey 业务id
- * @returns
- */
-export const getHistoryRecord = (businessKey: string | number) => {
-  return request({
-    url: `/workflow/processInstance/getHistoryRecord/${businessKey}`,
     method: 'get'
   });
 };
@@ -125,9 +114,8 @@ export const cancelProcessApply = (businessKey: string) => {
 export default {
   getPageByRunning,
   getPageByFinish,
-  getHistoryImage,
+  getFlowImage,
   getHistoryList,
-  getHistoryRecord,
   deleteRunInstance,
   deleteRunAndHisInstance,
   deleteFinishAndHisInstance,

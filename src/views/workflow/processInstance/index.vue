@@ -133,11 +133,6 @@
           </template>
         </el-table-column>
         <el-table-column align="center" prop="deploymentTime" label="部署时间" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column fixed="right" label="操作" align="center" width="200" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-button link type="primary" size="small" icon="Sort" @click="handleChange(scope.row.id)">切换</el-button>
-          </template>
-        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -151,7 +146,6 @@ import {
   deleteFinishAndHisInstance,
   deleteRunInstance
 } from '@/api/workflow/processInstance';
-import { migrationDefinition } from '@/api/workflow/definition';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
@@ -320,17 +314,6 @@ const handleInvalid = async (row: ProcessInstanceVO) => {
 };
 const cancelPopover = async (index: any) => {
   (proxy?.$refs[`popoverRef${index}`] as any).hide(); //关闭弹窗
-};
-//切换流程版本
-const handleChange = async (id: string) => {
-  await proxy?.$modal.confirm('是否确认切换？');
-  loading.value = true;
-  migrationDefinition(processDefinitionId.value, id).then((resp) => {
-    proxy?.$modal.msgSuccess('操作成功');
-    getProcessInstanceRunningList();
-    processDefinitionDialog.visible = false;
-    loading.value = false;
-  });
 };
 /** 查看按钮操作 */
 const handleView = (row) => {

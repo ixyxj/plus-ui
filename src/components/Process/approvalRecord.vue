@@ -2,27 +2,22 @@
   <div class="container">
     <el-dialog v-model="visible" draggable title="审批记录" :width="props.width" :height="props.height" :close-on-click-modal="false">
       <el-tabs v-model="tabActiveName" class="demo-tabs">
-        <el-tab-pane label="流程图" name="bpmn">
-          <BpmnView ref="bpmnViewRef"></BpmnView>
+        <el-tab-pane v-loading="loading" label="流程图" name="bpmn">
+          <img :src="imgUrl" width="100%" style="margin: 0 auto" />
         </el-tab-pane>
         <el-tab-pane v-loading="loading" label="审批信息" name="info">
           <div>
             <el-table :data="historyList" style="width: 100%" border fit>
               <el-table-column type="index" label="序号" align="center" width="60"></el-table-column>
-              <el-table-column prop="name" label="任务名称" sortable align="center"></el-table-column>
-              <el-table-column prop="nickName" :show-overflow-tooltip="true" label="办理人" sortable align="center">
+              <el-table-column prop="nodeName" label="任务名称" sortable align="center"></el-table-column>
+              <el-table-column prop="approveName" :show-overflow-tooltip="true" label="办理人" sortable align="center">
                 <template #default="scope">
-                  <el-tag type="success">{{ scope.row.nickName || '无' }}</el-tag>
+                  <el-tag type="success">{{ scope.row.approveName || '无' }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="状态" sortable align="center">
-                <template #default="scope">
-                  <el-tag type="success">{{ scope.row.statusName }}</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="comment" label="审批意见" sortable align="center"></el-table-column>
-              <el-table-column prop="startTime" label="开始时间" sortable align="center"></el-table-column>
-              <el-table-column prop="endTime" label="结束时间" sortable align="center"></el-table-column>
+              <el-table-column prop="message" label="审批意见" sortable align="center"></el-table-column>
+              <el-table-column prop="createTime" label="开始时间" sortable align="center"></el-table-column>
+              <el-table-column prop="updateTime" label="结束时间" sortable align="center"></el-table-column>
               <el-table-column prop="runDuration" label="运行时长" sortable align="center"></el-table-column>
               <el-table-column prop="attachmentList" label="附件" sortable align="center">
                 <template #default="scope">
@@ -49,7 +44,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import BpmnView from '@/components/BpmnView/index.vue';
 import processApi from '@/api/workflow/processInstance';
 import { propTypes } from '@/utils/propTypes';
 
@@ -63,8 +57,7 @@ const loading = ref(false);
 const visible = ref(false);
 const historyList = ref<Array<any>>([]);
 const tabActiveName = ref('bpmn');
-
-const bpmnViewRef = ref<BpmnView>();
+const imgUrl = ref('');
 
 //初始化查询审批记录
 const init = async (businessKey: string | number) => {
@@ -72,12 +65,12 @@ const init = async (businessKey: string | number) => {
   loading.value = true;
   tabActiveName.value = 'bpmn';
   historyList.value = [];
-  processApi.getHistoryRecord(businessKey).then((resp) => {
-    historyList.value = resp.data;
-    loading.value = false;
-  });
-  await nextTick(() => {
-    bpmnViewRef.value.init(businessKey);
+  processApi.getFlowImage(businessKey).then((resp) => {
+    if (resp.data) {
+      historyList.value = resp.data.list;
+      imgUrl.value = 'data:image/gif;base64,' + resp.data.image;
+      loading.value = false;
+    }
   });
 };
 

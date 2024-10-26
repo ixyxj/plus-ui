@@ -104,16 +104,16 @@
                       历史版本
                     </el-button>
                   </el-col>
+                  <el-col :span="1.5">
+                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                  </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
                     <el-button link type="primary" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-                  </el-col>
-                  <el-col :span="1.5">
-                    <el-button link type="primary" icon="Delete" size="small" @click="design(scope.row)">设计</el-button>
+                    <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -261,11 +261,9 @@
 <script lang="ts" setup name="processDefinition">
 import {
   listDefinition,
-  definitionImage,
   definitionXml,
   deleteDefinition,
   updateDefinitionState,
-  convertToModel,
   importDefinition,
   getHisListByKey,
   publish,
@@ -305,6 +303,7 @@ const processDefinitionList = ref<FlowDefinitionVo[]>([]);
 const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
+const disabled = ref(true);
 /** 部署文件分类选择 */
 const selectCategory = ref();
 
@@ -539,9 +538,9 @@ const handlerSaveForm = async () => {
 };
 const design = async (row: FlowDefinitionVo) => {
   proxy.$router.push({
-    path: `/workflow/modelDesign/index`,
+    path: `/workflow/design/index`,
     query: {
-      id: row.id
+      definitionId: row.id
     }
   });
 };
