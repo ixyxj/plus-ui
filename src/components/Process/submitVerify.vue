@@ -24,16 +24,21 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button :disabled="buttonDisabled" type="primary" @click="handleCompleteTask"> 提交 </el-button>
-        <el-button v-if="task.flowStatus === '1'" :disabled="buttonDisabled" type="primary" @click="openDelegateTask"> 委托 </el-button>
-        <el-button v-if="task.flowStatus === '1'" :disabled="buttonDisabled" type="primary" @click="openTransferTask"> 转办 </el-button>
-        <el-button v-if="task.flowStatus === '1' && task.multiInstance" :disabled="buttonDisabled" type="primary" @click="addMultiInstanceUser">
+        <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openDelegateTask"> 委托 </el-button>
+        <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openTransferTask"> 转办 </el-button>
+        <el-button v-if="task.flowStatus === 'waiting' && task.multiInstance" :disabled="buttonDisabled" type="primary" @click="addMultiInstanceUser">
           加签
         </el-button>
-        <el-button v-if="task.flowStatus === '1' && task.multiInstance" :disabled="buttonDisabled" type="primary" @click="deleteMultiInstanceUser">
+        <el-button
+          v-if="task.flowStatus === 'waiting' && task.multiInstance"
+          :disabled="buttonDisabled"
+          type="primary"
+          @click="deleteMultiInstanceUser"
+        >
           减签
         </el-button>
-        <el-button v-if="task.flowStatus === '1'" :disabled="buttonDisabled" type="danger" @click="handleTerminationTask"> 终止 </el-button>
-        <el-button v-if="task.flowStatus === '1'" :disabled="buttonDisabled" type="danger" @click="handleBackProcessOpen"> 退回 </el-button>
+        <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="danger" @click="handleTerminationTask"> 终止 </el-button>
+        <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="danger" @click="handleBackProcessOpen"> 退回 </el-button>
         <el-button :disabled="buttonDisabled" @click="cancel">取消</el-button>
       </span>
     </template>
@@ -48,7 +53,7 @@
 
     <!-- 驳回开始 -->
     <el-dialog v-model="backVisible" draggable title="驳回" width="40%" :close-on-click-modal="false">
-      <el-form v-if="task.flowStatus === '1'" v-loading="backLoading" :model="backForm" label-width="120px">
+      <el-form v-if="task.flowStatus === 'waiting'" v-loading="backLoading" :model="backForm" label-width="120px">
         <el-form-item label="驳回节点">
           <el-select v-model="backForm.nodeCode" clearable placeholder="请选择" style="width: 300px">
             <el-option v-for="item in taskNodeList" :key="item.nodeCode" :label="item.nodeName" :value="item.nodeCode" />

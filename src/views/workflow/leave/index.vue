@@ -59,7 +59,7 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button
-              v-if="scope.row.status === '0' || scope.row.status === '9' || scope.row.status === '10'"
+              v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'"
               v-hasPermi="['workflow:leave:edit']"
               size="small"
               link
@@ -68,14 +68,7 @@
               @click="handleUpdate(scope.row)"
               >修改</el-button
             >
-            <el-button
-              v-if="scope.row.status === '0' || scope.row.status === '9' || scope.row.status === '10'"
-              v-hasPermi="['workflow:leave:remove']"
-              size="small"
-              link
-              type="primary"
-              icon="Delete"
-              @click="handleDelete(scope.row)"
+            <el-button v-hasPermi="['workflow:leave:remove']" size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)"
               >删除</el-button
             >
             <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>

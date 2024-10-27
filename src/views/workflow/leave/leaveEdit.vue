@@ -3,10 +3,10 @@
     <el-card shadow="never">
       <div style="display: flex; justify-content: space-between">
         <div>
-          <el-button v-if="submitButtonShow" :loading="buttonLoading" type="info" @click="submitForm('0')">暂存</el-button>
+          <el-button v-if="submitButtonShow" :loading="buttonLoading" type="info" @click="submitForm('draft')">暂存</el-button>
           <el-button v-if="submitButtonShow" :loading="buttonLoading" type="primary" @click="submitForm('submit')">提 交</el-button>
           <el-button v-if="approvalButtonShow" :loading="buttonLoading" type="primary" @click="approvalVerifyOpen">审批</el-button>
-          <el-button v-if="form && form.id && form.status !== '0'" type="primary" @click="handleApprovalRecord">流程进度</el-button>
+          <el-button v-if="form && form.id && form.status !== 'draft'" type="primary" @click="handleApprovalRecord">流程进度</el-button>
         </div>
         <div>
           <el-button style="float: right" @click="goBack()">返回</el-button>
@@ -230,13 +230,13 @@ const submitButtonShow = computed(() => {
     routeParams.value.type === 'add' ||
     (routeParams.value.type === 'update' &&
       form.value.status &&
-      (form.value.status === '0' || form.value.status === '9' || form.value.status === '10'))
+      (form.value.status === 'draft' || form.value.status === 'cancel' || form.value.status === 'back'))
   );
 });
 
 //校验审批按钮是否显示
 const approvalButtonShow = computed(() => {
-  return routeParams.value.type === 'approval' && form.value.status && form.value.status === '1';
+  return routeParams.value.type === 'approval' && form.value.status && form.value.status === 'waiting';
 });
 
 onMounted(() => {
