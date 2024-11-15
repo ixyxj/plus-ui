@@ -11,6 +11,7 @@ import { onMounted } from 'vue';
 // disabled为是否可编辑, 例如：查看的时候不可编辑，不可保存
 const iframeUrl = ref('');
 const baseUrl = import.meta.env.VITE_APP_BASE_API;
+import { getToken } from '@/utils/auth';
 const iframeLoaded = () => {
   // iframe监听组件内设计器保存事件
   window.onmessage = (event) => {
@@ -22,7 +23,8 @@ const iframeLoaded = () => {
   };
 };
 const open = async (definitionId) => {
-  iframeUrl.value = baseUrl + `/warm-flow-ui/index.html?id=${definitionId}&disabled=false`;
+  let url = baseUrl + `/warm-flow-ui/index.html?id=${definitionId}&disabled=false&Authorization=${getToken}`;
+  iframeUrl.value = url + '&Authorization=Bearer ' + getToken() + '&clientid=' + import.meta.env.VITE_APP_CLIENT_ID;
 };
 /** 关闭按钮 */
 function close() {
