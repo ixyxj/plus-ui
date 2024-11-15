@@ -36,9 +36,9 @@
         <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
         <el-table-column align="center" label="办理人">
           <template #default="scope">
-            <template v-if="scope.row.userDTOList && scope.row.userDTOList.length > 0">
-              <el-tag v-for="(item, index) in scope.row.userDTOList" :key="index" type="success">
-                {{ item.nickName }}
+            <template v-if="scope.row.transactorNames">
+              <el-tag v-for="(name, index) in scope.row.transactorNames.split(',')" :key="index" type="success">
+                {{ name }}
               </el-tag>
             </template>
             <template v-else>
