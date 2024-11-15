@@ -62,7 +62,11 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="流程状态" prop="flowStatusName" min-width="70"> </el-table-column>
+        <el-table-column align="center" label="流程状态" prop="flowStatusName" min-width="70">
+          <template #default="scope">
+            <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column label="操作" align="center" :width="tab === 'finish' ? '80' : '151'">
           <template #default="scope">

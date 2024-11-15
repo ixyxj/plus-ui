@@ -7,11 +7,10 @@
 <script setup name="WarmFlow">
 const { proxy } = getCurrentInstance();
 import { onMounted } from 'vue';
-
 // definitionId为需要查询的流程定义id，
 // disabled为是否可编辑, 例如：查看的时候不可编辑，不可保存
 const iframeUrl = ref('');
-const disabled = ref(false);
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 const iframeLoaded = () => {
   // iframe监听组件内设计器保存事件
   window.onmessage = (event) => {
@@ -23,8 +22,7 @@ const iframeLoaded = () => {
   };
 };
 const open = async (definitionId) => {
-  iframeUrl.value = `http://localhost:8080/warm-flow-ui/${definitionId}`;
-  console.log(iframeUrl.value);
+  iframeUrl.value = baseUrl + `/warm-flow-ui/index.html?id=${definitionId}&disabled=false`;
 };
 /** 关闭按钮 */
 function close() {
