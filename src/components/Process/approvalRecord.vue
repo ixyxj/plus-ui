@@ -23,6 +23,7 @@
               <el-table-column prop="message" label="审批意见" sortable align="center"></el-table-column>
               <el-table-column prop="createTime" label="开始时间" sortable align="center"></el-table-column>
               <el-table-column prop="updateTime" label="结束时间" sortable align="center"></el-table-column>
+              <el-table-column prop="runDuration" label="运行时常" sortable align="center"></el-table-column>
               <el-table-column prop="attachmentList" label="附件" sortable align="center">
                 <template #default="scope">
                   <el-popover v-if="scope.row.attachmentList && scope.row.attachmentList.length > 0" placement="right" :width="310" trigger="click">

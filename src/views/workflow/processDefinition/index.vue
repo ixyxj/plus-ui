@@ -107,16 +107,18 @@
                       历史版本
                     </el-button>
                   </el-col>
-                  <el-button
-                    v-if="scope.row.isPublish === 0 || scope.row.isPublish === 9"
-                    link
-                    type="primary"
-                    size="small"
-                    icon="CircleCheck"
-                    @click="handlePublish(scope.row)"
-                    >发布流程</el-button
-                  >
-                  <el-button v-else link type="primary" size="small" icon="CircleClose" @click="handleUnPublish(scope.row)">取消发布</el-button>
+                  <el-col :span="1.5">
+                    <el-button
+                      v-if="scope.row.isPublish === 0 || scope.row.isPublish === 9"
+                      link
+                      type="primary"
+                      size="small"
+                      icon="CircleCheck"
+                      @click="handlePublish(scope.row)"
+                      >发布流程</el-button
+                    >
+                    <el-button v-else link type="primary" size="small" icon="CircleClose" @click="handleUnPublish(scope.row)">取消发布</el-button>
+                  </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">

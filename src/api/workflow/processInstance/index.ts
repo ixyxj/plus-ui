@@ -1,7 +1,6 @@
 import request from '@/utils/request';
 import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
 import { AxiosPromise } from 'axios';
-import { number } from 'vue-types';
 
 /**
  * 查询运行中实例列表
@@ -111,6 +110,17 @@ export const cancelProcessApply = (businessKey: string) => {
   });
 };
 
+/**
+ * 获取流程变量
+ * @param businessKey 业务id
+ * @returns
+ */
+export const getInstanceVariable = (instanceId: string) => {
+  return request({
+    url: `/workflow/processInstance/getInstanceVariable/${instanceId}`,
+    method: 'get'
+  });
+};
 export default {
   getPageByRunning,
   getPageByFinish,

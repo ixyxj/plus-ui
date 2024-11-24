@@ -125,10 +125,11 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByAllTaskWait, getPageByAllTaskFinish, updateAssignee, getInstanceVariable } from '@/api/workflow/task';
+import { getPageByAllTaskWait, getPageByAllTaskFinish, updateAssignee } from '@/api/workflow/task';
+import { getInstanceVariable } from '@/api/workflow/processInstance';
 import MultiInstanceUser from '@/components/Process/multiInstanceUser.vue';
 import UserSelect from '@/components/UserSelect';
-import { TaskQuery, TaskVO, VariableVo } from '@/api/workflow/task/types';
+import { TaskQuery, FlowTaskVO, VariableVo } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 //审批记录组件
@@ -176,14 +177,14 @@ const queryParams = ref<TaskQuery>({
 const tab = ref('waiting');
 
 //加签
-const addMultiInstanceUser = (row: TaskVO) => {
+const addMultiInstanceUser = (row: FlowTaskVO) => {
   if (multiInstanceUserRef.value) {
     title.value = '加签人员';
     multiInstanceUserRef.value.getAddMultiInstanceList(row.id, []);
   }
 };
 //减签
-const deleteMultiInstanceUser = (row: TaskVO) => {
+const deleteMultiInstanceUser = (row: FlowTaskVO) => {
   if (multiInstanceUserRef.value) {
     title.value = '减签人员';
     multiInstanceUserRef.value.getDeleteMultiInstanceList(row.id);
@@ -253,12 +254,12 @@ const submitCallback = async (data) => {
   }
 };
 //查询流程变量
-const handleInstanceVariable = async (row: TaskVO) => {
+const handleInstanceVariable = async (row: FlowTaskVO) => {
   variableLoading.value = true;
   variableVisible.value = true;
-  processDefinitionName.value = row.processDefinitionName;
-  let data = await getInstanceVariable(row.id);
-  variableList.value = data.data;
+  processDefinitionName.value = row.flowName;
+  let data = await getInstanceVariable(row.instanceId);
+  variableList.value = data.data.variableList;
   variableLoading.value = false;
 };
 /** 查看按钮操作 */
