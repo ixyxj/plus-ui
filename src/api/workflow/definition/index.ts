@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { definitionQuery, definitionVO, definitionXmlVO, FlowDefinitionForm } from '@/api/workflow/definition/types';
+import { FlowDefinitionQuery, FlowDefinitionVo, definitionXmlVO, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { AxiosPromise } from 'axios';
 
 /**
@@ -7,7 +7,7 @@ import { AxiosPromise } from 'axios';
  * @param query 流程实例id
  * @returns
  */
-export const listDefinition = (query: definitionQuery): AxiosPromise<definitionVO[]> => {
+export const listDefinition = (query: FlowDefinitionQuery): AxiosPromise<FlowDefinitionQuery[]> => {
   return request({
     url: `/workflow/definition/list`,
     method: 'get',
@@ -123,5 +123,17 @@ export const add = (data: FlowDefinitionForm) => {
     url: `/workflow/definition`,
     method: 'post',
     data: data
+  });
+};
+
+/**
+ * 复制流程定义
+ * @param id 流程定义id
+ * @returns
+ */
+export const copyDef = (id: string) => {
+  return request({
+    url: `/workflow/definition/copyDef/${id}`,
+    method: 'post'
   });
 };

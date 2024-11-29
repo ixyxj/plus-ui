@@ -6,7 +6,7 @@ export interface FlowDefinitionQuery extends PageQuery {
   isPublish?: number;
 }
 
-export interface FlowDefinitionVo extends BaseEntity {
+export interface FlowDefinitionVo {
   id: string;
   flowName: string;
   flowCode: string;
