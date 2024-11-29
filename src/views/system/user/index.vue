@@ -81,13 +81,13 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item icon="Download" @click="importTemplate">下载模板</el-dropdown-item>
-                      <el-dropdown-item icon="Top" @click="handleImport"> 导入数据</el-dropdown-item>
+                      <el-dropdown-item icon="Top" @click="handleImport">导入数据</el-dropdown-item>
                       <el-dropdown-item icon="Download" @click="handleExport"> 导出数据</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
               </el-col>
-              <right-toolbar v-model:showSearch="showSearch" :columns="columns" :search="true" @query-table="getList"></right-toolbar>
+              <right-toolbar v-model:show-search="showSearch" :columns="columns" :search="true" @query-table="getList"></right-toolbar>
             </el-row>
           </template>
 
@@ -393,7 +393,7 @@ const initData: PageData<UserForm, UserQuery> = {
         message: '用户密码长度必须介于 5 和 20 之间',
         trigger: 'blur'
       },
-      { pattern: /^[^<>"'|\\]+$/, message: '不能包含非法字符：< > " \' \\\ |', trigger: 'blur' }
+      { pattern: /^[^<>"'|\\]+$/, message: '不能包含非法字符：< > " \' \\ |', trigger: 'blur' }
     ],
     email: [
       {
@@ -506,7 +506,7 @@ const handleResetPwd = async (row: UserVO) => {
       inputErrorMessage: '用户密码长度必须介于 5 和 20 之间',
       inputValidator: (value) => {
         if (/<|>|"|'|\||\\/.test(value)) {
-          return '不能包含非法字符：< > " \' \\\ |';
+          return '不能包含非法字符：< > " \' \\ |';
         }
       }
     })
