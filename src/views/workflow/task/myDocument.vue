@@ -49,7 +49,7 @@
             <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"> </el-table-column>
             <el-table-column align="center" prop="flowCode" label="流程定义KEY"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="90">
-              <template #default="scope"> v{{ scope.row.version }}</template>
+              <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>
             <el-table-column v-if="tab === 'running'" align="center" prop="isSuspended" label="状态" min-width="70">
               <template #default="scope">
@@ -57,7 +57,11 @@
                 <el-tag v-else type="danger">挂起</el-tag>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="flowStatusName" label="流程状态" min-width="70"> </el-table-column>
+            <el-table-column align="center" label="流程状态" min-width="70">
+              <template #default="scope">
+                <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
+              </template>
+            </el-table-column>
             <el-table-column align="center" prop="createTime" label="启动时间" width="160"></el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
               <template #default="scope">

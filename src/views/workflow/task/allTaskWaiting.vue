@@ -44,6 +44,9 @@
         <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
         <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"> </el-table-column>
         <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
+        <el-table-column align="center" prop="version" label="版本号" width="90">
+          <template #default="scope"> v{{ scope.row.version }}.0</template>
+        </el-table-column>
         <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
         <el-table-column align="center" label="办理人">
           <template #default="scope">
@@ -62,7 +65,7 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="流程状态" prop="flowStatusName" min-width="70">
+        <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="70">
           <template #default="scope">
             <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
           </template>

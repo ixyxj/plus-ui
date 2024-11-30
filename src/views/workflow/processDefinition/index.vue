@@ -82,7 +82,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" align="center" width="300" class-name="small-padding fixed-width">
+            <el-table-column fixed="right" label="操作" align="center" width="320" class-name="small-padding fixed-width">
               <template #default="scope">
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
@@ -108,21 +108,21 @@
                     </el-button>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="CopyDocument" @click="handleCopyDef(scope.row)">复制流程</el-button>
+                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除流程</el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
                     <el-button link type="primary" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
                   </el-col>
-                  <el-col :span="1.5">
+                  <el-col v-if="scope.row.isPublish === 0" :span="1.5">
                     <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
                   </el-col>
                   <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
                     <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button link type="primary" size="small" icon="CopyDocument" @click="handleCopyDef(scope.row)">复制流程</el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -195,7 +195,7 @@
             <el-tag v-else type="danger">失效</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
@@ -212,6 +212,9 @@
               <el-col :span="1.5">
                 <el-button type="text" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
               </el-col>
+              <el-col :span="1.5">
+                <el-button link type="primary" icon="Delete" size="small" @click="handleDelete(scope.row)">删除流程</el-button>
+              </el-col>
             </el-row>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
@@ -220,8 +223,8 @@
               <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
                 <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
               </el-col>
-              <el-col :span="1.5">
-                <el-button link type="primary" icon="Delete" size="small" @click="handleDelete(scope.row)">删除</el-button>
+              <el-col v-if="scope.row.isPublish === 0" :span="1.5">
+                <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
               </el-col>
             </el-row>
           </template>

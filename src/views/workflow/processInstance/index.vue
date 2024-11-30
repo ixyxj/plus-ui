@@ -65,8 +65,8 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="flowCode" label="流程定义KEY"></el-table-column>
-            <el-table-column align="center" prop="processDefinitionVersion" label="版本号" width="90">
-              <template #default="scope"> v{{ scope.row.version }}</template>
+            <el-table-column align="center" prop="version" label="版本号" width="90">
+              <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>
             <el-table-column v-if="tab === 'running'" align="center" prop="isSuspended" label="状态" min-width="70">
               <template #default="scope">

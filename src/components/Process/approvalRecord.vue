@@ -15,16 +15,16 @@
                   <el-tag type="success">{{ scope.row.approveName || '无' }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="flowStatus" label="状态" sortable align="center">
+              <el-table-column prop="flowStatus" label="状态" width="80" sortable align="center">
                 <template #default="scope">
                   <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="message" label="审批意见" sortable align="center"></el-table-column>
-              <el-table-column prop="createTime" label="开始时间" sortable align="center"></el-table-column>
-              <el-table-column prop="updateTime" label="结束时间" sortable align="center"></el-table-column>
-              <el-table-column prop="runDuration" label="运行时常" sortable align="center"></el-table-column>
-              <el-table-column prop="attachmentList" label="附件" sortable align="center">
+              <el-table-column prop="message" label="审批意见" :show-overflow-tooltip="true" sortable align="center"></el-table-column>
+              <el-table-column prop="createTime" label="开始时间" width="160" :show-overflow-tooltip="true" sortable align="center"></el-table-column>
+              <el-table-column prop="updateTime" label="结束时间" width="160" :show-overflow-tooltip="true" sortable align="center"></el-table-column>
+              <el-table-column prop="runDuration" label="运行时常" width="120" sortable align="center"></el-table-column>
+              <el-table-column prop="attachmentList" width="100" label="附件" sortable align="center">
                 <template #default="scope">
                   <el-popover v-if="scope.row.attachmentList && scope.row.attachmentList.length > 0" placement="right" :width="310" trigger="click">
                     <template #reference>
@@ -55,7 +55,7 @@ import { propTypes } from '@/utils/propTypes';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
 const props = defineProps({
-  width: propTypes.string.def('70%'),
+  width: propTypes.string.def('80%'),
   height: propTypes.string.def('100%')
 });
 const loading = ref(false);
