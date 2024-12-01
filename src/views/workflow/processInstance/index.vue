@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column align="center" prop="createTime" label="启动时间" width="160"></el-table-column>
             <el-table-column v-if="tab === 'finish'" align="center" prop="updateTime" label="结束时间" width="160"></el-table-column>
-            <el-table-column label="操作" align="center" :width="130">
+            <el-table-column label="操作" align="center" :width="162">
               <template #default="scope">
                 <el-row v-if="tab === 'running'" :gutter="10" class="mb8">
                   <el-col :span="1.5">
@@ -92,17 +92,17 @@
                         <el-button size="small" type="primary" @click="handleInvalid(scope.row)">确认</el-button>
                       </div>
                       <template #reference>
-                        <el-button link type="primary" size="small" icon="CircleClose">作废</el-button>
+                        <el-button type="primary" size="small" icon="CircleClose">作废</el-button>
                       </template>
                     </el-popover>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
-                  <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                  <el-col :span="tab === 'running'?1.5:24">
+                    <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
                   </el-col>
                 </el-row>
               </template>
