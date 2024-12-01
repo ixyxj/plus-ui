@@ -63,28 +63,24 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="createTime" label="启动时间" width="160"></el-table-column>
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+            <el-table-column label="操作" align="center" width="162">
               <template #default="scope">
-                <el-tooltip
-                  v-if="scope.row.businessStatus === 'draft' || scope.row.businessStatus === 'cancel' || scope.row.businessStatus === 'back'"
-                  content="修改"
-                  placement="top"
-                >
-                  <el-button link type="primary" icon="Edit" @click="handleOpen(scope.row, 'update')"></el-button>
-                </el-tooltip>
-                <el-tooltip
-                  v-if="scope.row.businessStatus === 'draft' || scope.row.businessStatus === 'cancel' || scope.row.businessStatus === 'back'"
-                  content="删除"
-                  placement="top"
-                >
-                  <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
-                </el-tooltip>
-                <el-tooltip placement="top" content="查看">
-                  <el-button link type="primary" icon="View" @click="handleOpen(scope.row, 'view')"></el-button>
-                </el-tooltip>
-                <el-tooltip v-if="scope.row.businessStatus === 'waiting'" content="撤销" placement="top">
-                  <el-button link type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.businessKey)"></el-button>
-                </el-tooltip>
+                <el-row :gutter="10" class="mb8">
+                  <el-col :span="1.5" v-if="scope.row.flowStatus === 'draft' || scope.row.flowStatus === 'cancel' || scope.row.flowStatus === 'back'">
+                    <el-button type="primary" size="small" icon="Edit" @click="handleOpen(scope.row, 'update')">编辑</el-button>
+                  </el-col>
+                  <el-col :span="1.5" v-if="scope.row.flowStatus === 'draft' || scope.row.flowStatus === 'cancel' || scope.row.flowStatus === 'back'">
+                    <el-button type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="10" class="mb8">
+                  <el-col :span="1.5">
+                    <el-button type="primary" size="small" icon="View" @click="handleOpen(scope.row, 'view')">查看</el-button>
+                  </el-col>
+                  <el-col :span="1.5" v-if="scope.row.flowStatus === 'waiting'">
+                    <el-button type="primary" size="small" icon="Notification" @click="handleCancelProcessApply(scope.row.businessId)">撤销</el-button>
+                  </el-col>
+                </el-row>
               </template>
             </el-table-column>
           </el-table>
@@ -226,11 +222,15 @@ const handleDelete = async (row: ProcessInstanceVO) => {
 };
 
 /** 撤销按钮操作 */
-const handleCancelProcessApply = async (businessKey: string) => {
+const handleCancelProcessApply = async (businessId: string) => {
   await proxy?.$modal.confirm('是否确认撤销当前单据？');
   loading.value = true;
   if ('running' === tab.value) {
-    await cancelProcessApply(businessKey).finally(() => (loading.value = false));
+    let data = {
+      businessId:businessId,
+      message:'撤销流程！'
+    }
+    await cancelProcessApply(data).finally(() => (loading.value = false));
     getList();
   }
   proxy?.$modal.msgSuccess('撤销成功');

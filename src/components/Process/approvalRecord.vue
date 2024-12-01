@@ -17,7 +17,7 @@
               </el-table-column>
               <el-table-column prop="flowStatus" label="状态" width="80" sortable align="center">
                 <template #default="scope">
-                  <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
+                  <dict-tag :options="wf_task_status" :value="scope.row.flowStatus"></dict-tag>
                 </template>
               </el-table-column>
               <el-table-column prop="message" label="审批意见" :show-overflow-tooltip="true" sortable align="center"></el-table-column>
@@ -53,7 +53,7 @@ import processApi from '@/api/workflow/processInstance';
 import { propTypes } from '@/utils/propTypes';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+const { wf_task_status } = toRefs<any>(proxy?.useDict('wf_task_status'));
 const props = defineProps({
   width: propTypes.string.def('80%'),
   height: propTypes.string.def('100%')

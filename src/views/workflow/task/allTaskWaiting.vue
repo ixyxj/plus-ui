@@ -70,6 +70,11 @@
             <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
           </template>
         </el-table-column>
+        <el-table-column v-if="tab === 'finish'" align="center" label="任务状态" prop="flowTaskStatus" min-width="70">
+          <template #default="scope">
+            <dict-tag :options="wf_task_status" :value="scope.row.flowTaskStatus"></dict-tag>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column label="操作" align="center" :width="tab === 'finish' ? '80' : '151'">
           <template #default="scope">
@@ -144,6 +149,7 @@ const userSelectRef = ref<InstanceType<typeof UserSelect>>();
 const queryFormRef = ref<ElFormInstance>();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+const { wf_task_status } = toRefs<any>(proxy?.useDict('wf_task_status'));
 // 遮罩层
 const loading = ref(true);
 // 选中数组

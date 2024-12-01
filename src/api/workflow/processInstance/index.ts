@@ -100,13 +100,14 @@ export const getPageByCurrent = (query: ProcessInstanceQuery): AxiosPromise<Proc
 
 /**
  * 撤销流程
- * @param businessKey 业务id
+ * @param data 参数
  * @returns
  */
-export const cancelProcessApply = (businessKey: string) => {
+export const cancelProcessApply = (data: any) => {
   return request({
-    url: `/workflow/processInstance/cancelProcessApply/${businessKey}`,
-    method: 'put'
+    url: `/workflow/processInstance/cancelProcessApply`,
+    method: 'put',
+    data: data
   });
 };
 

@@ -8,7 +8,7 @@
           <el-checkbox label="3" name="type">短信</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item v-if="task.flowStatus === 1" label="附件">
+      <el-form-item v-if="task.flowStatus === 'waiting'" label="附件">
         <fileUpload v-model="form.fileId" :file-type="['doc', 'xls', 'ppt', 'txt', 'pdf', 'xlsx', 'docx', 'zip']" :file-size="'20'" />
       </el-form-item>
       <el-form-item label="抄送">
@@ -17,7 +17,7 @@
           {{ user.userName }}
         </el-tag>
       </el-form-item>
-      <el-form-item v-if="task.flowStatus === 1" label="审批意见">
+      <el-form-item v-if="task.flowStatus === 'waiting'" label="审批意见">
         <el-input v-model="form.message" type="textarea" resize="none" />
       </el-form-item>
     </el-form>
@@ -233,7 +233,10 @@ const handleBackProcess = async () => {
   loading.value = true;
   backLoading.value = true;
   backButtonDisabled.value = true;
-  await backProcess(backForm.value).finally(() => (loading.value = false));
+  await backProcess(backForm.value).finally(() => {
+    loading.value = false
+    buttonDisabled.value = false
+  });
   dialog.visible = false;
   backLoading.value = false;
   backButtonDisabled.value = false;
@@ -294,7 +297,10 @@ const handleTransferTask = async (data) => {
     await proxy?.$modal.confirm('是否确认提交？');
     loading.value = true;
     buttonDisabled.value = true;
-    await transferTask(params).finally(() => (loading.value = false));
+    await transferTask(params).finally(() => {
+      loading.value = false
+      buttonDisabled.value = false
+    });
     dialog.visible = false;
     emits('submitCallback');
     proxy?.$modal.msgSuccess('操作成功');
@@ -318,7 +324,10 @@ const handleDelegateTask = async (data) => {
     await proxy?.$modal.confirm('是否确认提交？');
     loading.value = true;
     buttonDisabled.value = true;
-    await delegateTask(params).finally(() => (loading.value = false));
+    await delegateTask(params).finally(() => {
+      loading.value = false
+      buttonDisabled.value = false
+    });
     dialog.visible = false;
     emits('submitCallback');
     proxy?.$modal.msgSuccess('操作成功');
@@ -335,7 +344,10 @@ const handleTerminationTask = async (data) => {
   await proxy?.$modal.confirm('是否确认终止？');
   loading.value = true;
   buttonDisabled.value = true;
-  await terminationTask(params).finally(() => (loading.value = false));
+  await terminationTask(params).finally(() => {
+    loading.value = false
+    buttonDisabled.value = false
+  });
   dialog.visible = false;
   emits('submitCallback');
   proxy?.$modal.msgSuccess('操作成功');

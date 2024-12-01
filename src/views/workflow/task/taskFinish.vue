@@ -45,6 +45,16 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="70">
+          <template #default="scope">
+            <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="任务状态" prop="flowTaskStatus" min-width="70">
+          <template #default="scope">
+            <dict-tag :options="wf_task_status" :value="scope.row.flowTaskStatus"></dict-tag>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
@@ -71,6 +81,8 @@ import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 //审批记录组件
 const queryFormRef = ref<ElFormInstance>();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+const { wf_task_status } = toRefs<any>(proxy?.useDict('wf_task_status'));
 // 遮罩层
 const loading = ref(true);
 // 选中数组
