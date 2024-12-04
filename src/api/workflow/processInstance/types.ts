@@ -10,7 +10,7 @@ export interface ProcessInstanceQuery extends PageQuery {
 export interface ProcessInstanceVO extends BaseEntity {
   id: string;
   definitionId: string;
-  flowNmae: string;
+  flowName: string;
   flowCode: string;
   version: string;
   businessId: string;

@@ -101,8 +101,11 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
-                  <el-col :span="tab === 'running'?1.5:24">
+                  <el-col :span="1.5">
                     <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                  </el-col>
+                  <el-col :span="1.5">
+                    <el-button type="primary" size="small" icon="Document" @click="handleInstanceVariable(scope.row)">变量</el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -135,6 +138,22 @@
         <el-table-column align="center" prop="deploymentTime" label="部署时间" :show-overflow-tooltip="true"></el-table-column>
       </el-table>
     </el-dialog>
+    <!-- 流程变量开始 -->
+    <el-dialog v-model="variableVisible" draggable title="流程变量" width="60%" :close-on-click-modal="false">
+      <el-card v-loading="variableLoading" class="box-card">
+        <template #header>
+          <div class="clearfix">
+            <span
+              >流程定义名称：<el-tag>{{ processDefinitionName }}</el-tag></span
+            >
+          </div>
+        </template>
+        <div class="max-h-500px overflow-y-auto">
+          <VueJsonPretty :data="formatToJsonObject(variables)" />
+        </div>
+      </el-card>
+    </el-dialog>
+    <!-- 流程变量结束 -->
   </div>
 </template>
 
@@ -144,13 +163,16 @@ import {
   getPageByFinish,
   deleteRunAndHisInstance,
   deleteFinishAndHisInstance,
-  deleteRunInstance
+  deleteRunInstance,
+  getInstanceVariable
 } from '@/api/workflow/processInstance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 //审批记录组件
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
@@ -171,8 +193,13 @@ const multiple = ref(true);
 const showSearch = ref(true);
 // 总条数
 const total = ref(0);
-// 流程定义id
-const processDefinitionId = ref<string>('');
+
+// 流程变量是否显示
+const variableVisible = ref(false);
+const variableLoading = ref(true);
+const variables = ref<string>('')
+//流程定义名称
+const processDefinitionName = ref();
 // 模型定义表格数据
 const processInstanceList = ref<ProcessInstanceVO[]>([]);
 const processDefinitionHistoryList = ref<Array<any>>([]);
@@ -327,6 +354,27 @@ const handleView = (row) => {
   workflowCommon.routerJump(routerJumpVo, proxy);
 };
 
+//查询流程变量
+const handleInstanceVariable = async (row: ProcessInstanceVO) => {
+  variableLoading.value = true;
+  variableVisible.value = true;
+  processDefinitionName.value = row.flowName;
+  let data = await getInstanceVariable(row.id);
+  variables.value = data.data.variable;
+  variableLoading.value = false;
+};
+
+/**
+ * json转为对象
+ * @param data 原始数据
+ */
+ function formatToJsonObject(data: string) {
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    return data;
+  }
+}
 onMounted(() => {
   getProcessInstanceRunningList();
   getTreeselect();

@@ -80,18 +80,15 @@
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
-              </el-col>
-              <el-col v-if="tab === 'waiting'" :span="1.5">
-                <el-button link type="primary" size="small" icon="Document" @click="handleInstanceVariable(scope.row)">流程变量</el-button>
+                <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
             </el-row>
             <el-row v-if="scope.row.multiInstance" :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button link type="primary" size="small" icon="Remove" @click="deleteMultiInstanceUser(scope.row)">减签</el-button>
+                <el-button type="primary" size="small" icon="Remove" @click="deleteMultiInstanceUser(scope.row)">减签</el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button link type="primary" size="small" icon="CirclePlus" @click="addMultiInstanceUser(scope.row)">加签</el-button>
+                <el-button type="primary" size="small" icon="CirclePlus" @click="addMultiInstanceUser(scope.row)">加签</el-button>
               </el-col>
             </el-row>
           </template>
@@ -109,32 +106,11 @@
     <multiInstanceUser ref="multiInstanceUserRef" :title="title" @submit-callback="handleQuery" />
     <!-- 选人组件 -->
     <UserSelect ref="userSelectRef" :multiple="false" @confirm-call-back="submitCallback"></UserSelect>
-    <!-- 流程变量开始 -->
-    <el-dialog v-model="variableVisible" draggable title="流程变量" width="60%" :close-on-click-modal="false">
-      <el-card v-loading="variableLoading" class="box-card">
-        <template #header>
-          <div class="clearfix">
-            <span
-              >流程定义名称：<el-tag>{{ processDefinitionName }}</el-tag></span
-            >
-          </div>
-        </template>
-        <div v-for="(v, index) in variableList" :key="index">
-          <el-form v-if="v.key !== '_FLOWABLE_SKIP_EXPRESSION_ENABLED'" :label-position="'right'" label-width="150px">
-            <el-form-item :label="v.key + '：'">
-              {{ v.value }}
-            </el-form-item>
-          </el-form>
-        </div>
-      </el-card>
-    </el-dialog>
-    <!-- 流程变量结束 -->
   </div>
 </template>
 
 <script lang="ts" setup>
 import { getPageByAllTaskWait, getPageByAllTaskFinish, updateAssignee } from '@/api/workflow/task';
-import { getInstanceVariable } from '@/api/workflow/processInstance';
 import MultiInstanceUser from '@/components/Process/multiInstanceUser.vue';
 import UserSelect from '@/components/UserSelect';
 import { TaskQuery, FlowTaskVO, VariableVo } from '@/api/workflow/task/types';
@@ -165,16 +141,6 @@ const total = ref(0);
 // 模型定义表格数据
 const taskList = ref([]);
 const title = ref('');
-// 流程变量是否显示
-const variableVisible = ref(false);
-const variableLoading = ref(true);
-// 流程变量
-const variableList = ref<VariableVo>({
-  key: '',
-  value: ''
-});
-//流程定义名称
-const processDefinitionName = ref();
 // 查询参数
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
@@ -261,15 +227,6 @@ const submitCallback = async (data) => {
   } else {
     proxy?.$modal.msgWarning('请选择用户！');
   }
-};
-//查询流程变量
-const handleInstanceVariable = async (row: FlowTaskVO) => {
-  variableLoading.value = true;
-  variableVisible.value = true;
-  processDefinitionName.value = row.flowName;
-  let data = await getInstanceVariable(row.instanceId);
-  variableList.value = data.data.variableList;
-  variableLoading.value = false;
 };
 /** 查看按钮操作 */
 const handleView = (row) => {
