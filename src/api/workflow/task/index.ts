@@ -174,10 +174,11 @@ export const deleteMultiInstanceExecution = (data: any) => {
  * @param userId
  * @returns
  */
-export const updateAssignee = (taskIds: Array<string>, userId: string) => {
+export const updateAssignee = (taskIdList: Array<string>, userId: string) => {
   return request({
-    url: `/workflow/task/updateAssignee/${taskIds}/${userId}`,
-    method: 'put'
+    url: `/workflow/task/updateAssignee/${userId}`,
+    method: 'put',
+    data: taskIdList
   });
 };
 
