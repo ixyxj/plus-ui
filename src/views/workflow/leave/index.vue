@@ -60,17 +60,14 @@
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button
-                  v-hasPermi="['workflow:leave:edit']"
-                  size="small"
-                  type="primary"
-                  icon="Edit"
-                  @click="handleUpdate(scope.row)"
-                  >修改</el-button>
+                <el-button v-hasPermi="['workflow:leave:edit']" size="small" type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                  >修改</el-button
+                >
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
                 <el-button v-hasPermi="['workflow:leave:remove']" size="small" type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                >删除</el-button>
+                  >删除</el-button
+                >
               </el-col>
             </el-row>
             <el-row :gutter="10" class="mb8">
@@ -78,12 +75,7 @@
                 <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
-                <el-button
-                  size="small"
-                  type="primary"
-                  icon="Notification"
-                  @click="handleCancelProcessApply(scope.row.id)"
-                  >撤销</el-button>
+                <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col>
             </el-row>
           </template>
@@ -231,9 +223,9 @@ const handleCancelProcessApply = async (id: string) => {
   await proxy?.$modal.confirm('是否确认撤销当前单据？');
   loading.value = true;
   let data = {
-    businessId:id,
-    message:'撤销流程！'
-  }
+    businessId: id,
+    message: '撤销流程！'
+  };
   await cancelProcessApply(data).finally(() => (loading.value = false));
   await getList();
   proxy?.$modal.msgSuccess('撤销成功');

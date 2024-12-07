@@ -85,12 +85,12 @@
 import { ref } from 'vue';
 import { ComponentInternalInstance } from 'vue';
 import { ElForm } from 'element-plus';
-import { completeTask, backProcess, getTaskById, transferTask, terminationTask, getBackTaskNode, delegateTask } from '@/api/workflow/task';
+import { completeTask, backProcess, getTaskById, taskOperation, terminationTask, getBackTaskNode } from '@/api/workflow/task';
 import UserSelect from '@/components/UserSelect';
 import MultiInstanceUser from '@/components/Process/multiInstanceUser.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 import { UserVO } from '@/api/system/user/types';
-import { FlowTaskVO } from '@/api/workflow/task/types';
+import { FlowTaskVO, TaskOperationBo } from '@/api/workflow/task/types';
 const userSelectCopyRef = ref<InstanceType<typeof UserSelect>>();
 const transferTaskRef = ref<InstanceType<typeof UserSelect>>();
 const delegateTaskRef = ref<InstanceType<typeof UserSelect>>();
@@ -234,8 +234,8 @@ const handleBackProcess = async () => {
   backLoading.value = true;
   backButtonDisabled.value = true;
   await backProcess(backForm.value).finally(() => {
-    loading.value = false
-    buttonDisabled.value = false
+    loading.value = false;
+    buttonDisabled.value = false;
   });
   dialog.visible = false;
   backLoading.value = false;
@@ -289,17 +289,17 @@ const openTransferTask = () => {
 //转办
 const handleTransferTask = async (data) => {
   if (data && data.length > 0) {
-    let params = {
-      taskId: taskId.value,
+    const taskOperationBo = reactive<TaskOperationBo>({
       userId: data[0].userId,
-      comment: form.value.message
-    };
+      taskId: taskId.value,
+      message: form.value.message
+    });
     await proxy?.$modal.confirm('是否确认提交？');
     loading.value = true;
     buttonDisabled.value = true;
-    await transferTask(params).finally(() => {
-      loading.value = false
-      buttonDisabled.value = false
+    await taskOperation(taskOperationBo, 'transferTask').finally(() => {
+      loading.value = false;
+      buttonDisabled.value = false;
     });
     dialog.visible = false;
     emits('submitCallback');
@@ -316,17 +316,17 @@ const openDelegateTask = () => {
 //委托
 const handleDelegateTask = async (data) => {
   if (data && data.length > 0) {
-    let params = {
-      taskId: taskId.value,
+    const taskOperationBo = reactive<TaskOperationBo>({
       userId: data[0].userId,
-      nickName: data[0].nickName
-    };
+      taskId: taskId.value,
+      message: form.value.message
+    });
     await proxy?.$modal.confirm('是否确认提交？');
     loading.value = true;
     buttonDisabled.value = true;
-    await delegateTask(params).finally(() => {
-      loading.value = false
-      buttonDisabled.value = false
+    await taskOperation(taskOperationBo, 'delegateTask').finally(() => {
+      loading.value = false;
+      buttonDisabled.value = false;
     });
     dialog.visible = false;
     emits('submitCallback');
@@ -345,8 +345,8 @@ const handleTerminationTask = async (data) => {
   loading.value = true;
   buttonDisabled.value = true;
   await terminationTask(params).finally(() => {
-    loading.value = false
-    buttonDisabled.value = false
+    loading.value = false;
+    buttonDisabled.value = false;
   });
   dialog.visible = false;
   emits('submitCallback');
