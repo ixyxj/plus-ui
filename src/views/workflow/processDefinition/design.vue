@@ -22,10 +22,9 @@ const iframeLoaded = () => {
     }
   };
 };
-const open = async (definitionId) => {
-  let url = baseUrl + `/warm-flow-ui/index.html?id=${definitionId}&disabled=false`;
+const open = async (definitionId, disabled) => {
+  let url = baseUrl + `/warm-flow-ui/index.html?id=${definitionId}&disabled=${disabled}`;
   iframeUrl.value = url + '&Authorization=Bearer ' + getToken() + '&clientid=' + import.meta.env.VITE_APP_CLIENT_ID;
-  console.log(iframeUrl.value);
 };
 /** 关闭按钮 */
 function close() {
@@ -35,7 +34,7 @@ function close() {
 
 onMounted(() => {
   iframeLoaded();
-  open(proxy.$route.query.definitionId);
+  open(proxy.$route.query.definitionId, proxy.$route.query.disabled);
 });
 /**
  * 对外暴露子组件方法

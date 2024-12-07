@@ -115,8 +115,11 @@
                   <el-col :span="1.5">
                     <el-button link type="primary" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
                   </el-col>
-                  <el-col v-if="scope.row.isPublish === 0" :span="1.5">
-                    <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
+                  <el-col :span="1.5">
+                    <el-button link type="primary" v-if="scope.row.isPublish === 0" icon="Pointer" size="small" @click="design(scope.row)"
+                      >流程设计</el-button
+                    >
+                    <el-button link type="primary" v-else icon="View" size="small" @click="designView(scope.row)">查看流程</el-button>
                   </el-col>
                   <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
                     <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
@@ -585,7 +588,22 @@ const design = async (row: FlowDefinitionVo) => {
   proxy.$router.push({
     path: `/workflow/design/index`,
     query: {
-      definitionId: row.id
+      definitionId: row.id,
+      disabled: false
+    }
+  });
+};
+
+/**
+ * 查看流程
+ * @param row
+ */
+const designView = async (row: FlowDefinitionVo) => {
+  proxy.$router.push({
+    path: `/workflow/design/index`,
+    query: {
+      definitionId: row.id,
+      disabled: true
     }
   });
 };
