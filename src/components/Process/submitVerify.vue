@@ -26,15 +26,15 @@
         <el-button :disabled="buttonDisabled" type="primary" @click="handleCompleteTask"> 提交 </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openDelegateTask"> 委托 </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openTransferTask"> 转办 </el-button>
-        <el-button v-if="task.flowStatus === 'waiting' && task.multiInstance" :disabled="buttonDisabled" type="primary" @click="addMultiInstanceUser">
-          加签
-        </el-button>
         <el-button
-          v-if="task.flowStatus === 'waiting' && task.multiInstance"
+          v-if="task.flowStatus === 'waiting' && task.nodeRatio > 0"
           :disabled="buttonDisabled"
           type="primary"
-          @click="deleteMultiInstanceUser"
+          @click="openMultiInstanceUser"
         >
+          加签
+        </el-button>
+        <el-button v-if="task.flowStatus === 'waiting' && task.nodeRatio > 0" :disabled="buttonDisabled" type="primary" @click="handleTaskUser">
           减签
         </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="danger" @click="handleTerminationTask"> 终止 </el-button>
@@ -49,7 +49,7 @@
     <!-- 委托 -->
     <UserSelect ref="delegateTaskRef" :multiple="false" @confirm-call-back="handleDelegateTask"></UserSelect>
     <!-- 加签组件 -->
-    <multiInstanceUser ref="multiInstanceUserRef" :title="title" @submit-callback="closeDialog" />
+    <UserSelect ref="multiInstanceUserRef" :multiple="true" @confirm-call-back="addMultiInstanceUser"></UserSelect>
 
     <!-- 驳回开始 -->
     <el-dialog v-model="backVisible" draggable title="驳回" width="40%" :close-on-click-modal="false">
@@ -78,6 +78,19 @@
       </template>
     </el-dialog>
     <!-- 驳回结束 -->
+    <el-dialog v-model="deleteSignatureVisible" draggable title="减签人员" width="700px" height="400px" append-to-body :close-on-click-modal="false"
+      ><div>
+        <el-table :data="deleteUserList" border>
+          <el-table-column prop="nodeName" label="任务名称" />
+          <el-table-column prop="nickName" label="办理人" />
+          <el-table-column label="操作" align="center" width="160">
+            <template #default="scope">
+              <el-button type="danger" size="small" icon="Delete" @click="deleteMultiInstanceUser(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -85,18 +98,15 @@
 import { ref } from 'vue';
 import { ComponentInternalInstance } from 'vue';
 import { ElForm } from 'element-plus';
-import { completeTask, backProcess, getTaskById, taskOperation, terminationTask, getBackTaskNode } from '@/api/workflow/task';
+import { completeTask, backProcess, getTaskById, taskOperation, terminationTask, getBackTaskNode, getUserListTaskId } from '@/api/workflow/task';
 import UserSelect from '@/components/UserSelect';
-import MultiInstanceUser from '@/components/Process/multiInstanceUser.vue';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 import { UserVO } from '@/api/system/user/types';
 import { FlowTaskVO, TaskOperationBo } from '@/api/workflow/task/types';
 const userSelectCopyRef = ref<InstanceType<typeof UserSelect>>();
 const transferTaskRef = ref<InstanceType<typeof UserSelect>>();
 const delegateTaskRef = ref<InstanceType<typeof UserSelect>>();
-
-//加签组件
-const multiInstanceUserRef = ref<InstanceType<typeof MultiInstanceUser>>();
+const multiInstanceUserRef = ref<InstanceType<typeof UserSelect>>();
 
 const props = defineProps({
   taskVariables: {
@@ -114,7 +124,9 @@ const taskId = ref<string>('');
 const selectCopyUserList = ref<UserVO[]>([]);
 //抄送人id
 const selectCopyUserIds = ref<string>(undefined);
-// 驳回是否显示
+//可减签的人员
+const deleteUserList = ref<any>([]);
+//驳回是否显示
 const backVisible = ref(false);
 const backLoading = ref(true);
 const backButtonDisabled = ref(true);
@@ -135,16 +147,16 @@ const task = ref<FlowTaskVO>({
   flowCode: undefined,
   flowStatus: undefined,
   nodeType: undefined,
+  nodeRatio: undefined,
   wfNodeConfigVo: undefined,
   wfDefinitionConfigVo: undefined
 });
-//加签 减签标题
-const title = ref('');
 const dialog = reactive<DialogOption>({
   visible: false,
   title: '提示'
 });
-
+//减签弹窗
+const deleteSignatureVisible = ref(false);
 const form = ref<Record<string, any>>({
   taskId: undefined,
   message: undefined,
@@ -269,18 +281,46 @@ const handleCopyCloseTag = (user: UserVO) => {
   selectCopyUserIds.value = selectCopyUserList.value.map((item) => item.userId).join(',');
 };
 //加签
-const addMultiInstanceUser = () => {
-  if (multiInstanceUserRef.value) {
-    title.value = '加签人员';
-    multiInstanceUserRef.value.getAddMultiInstanceList(taskId.value, []);
+const openMultiInstanceUser = async () => {
+  multiInstanceUserRef.value.open();
+};
+//加签
+const addMultiInstanceUser = async (data) => {
+  if (data && data.length > 0) {
+    const taskOperationBo = reactive<TaskOperationBo>({
+      userIds: data.map((e) => e.userId),
+      taskId: taskId.value,
+      message: form.value.message
+    });
+    await proxy?.$modal.confirm('是否确认提交？');
+    loading.value = true;
+    buttonDisabled.value = true;
+    await taskOperation(taskOperationBo, 'addSignature').finally(() => {
+      loading.value = false;
+      buttonDisabled.value = false;
+    });
+    dialog.visible = false;
+    emits('submitCallback');
+    proxy?.$modal.msgSuccess('操作成功');
+  } else {
+    proxy?.$modal.msgWarning('请选择用户！');
   }
 };
 //减签
-const deleteMultiInstanceUser = () => {
-  if (multiInstanceUserRef.value) {
-    title.value = '减签人员';
-    multiInstanceUserRef.value.getDeleteMultiInstanceList(taskId.value);
-  }
+const deleteMultiInstanceUser = async (row) => {
+  await proxy?.$modal.confirm('是否确认提交？');
+  loading.value = true;
+  buttonDisabled.value = true;
+  const taskOperationBo = reactive<TaskOperationBo>({
+    userIds: [row.userId],
+    taskId: taskId.value,
+    message: form.value.message
+  });
+  await taskOperation(taskOperationBo, 'reductionSignature').finally(() => {
+    dialog.visible = false;
+    emits('submitCallback');
+    proxy?.$modal.msgSuccess('操作成功');
+  });
 };
 //打开转办
 const openTransferTask = () => {
@@ -336,7 +376,7 @@ const handleDelegateTask = async (data) => {
   }
 };
 //终止任务
-const handleTerminationTask = async (data) => {
+const handleTerminationTask = async () => {
   let params = {
     taskId: taskId.value,
     comment: form.value.message
@@ -351,6 +391,16 @@ const handleTerminationTask = async (data) => {
   dialog.visible = false;
   emits('submitCallback');
   proxy?.$modal.msgSuccess('操作成功');
+};
+const handleTaskUser = async () => {
+  let data = await getUserListTaskId(taskId.value);
+  deleteUserList.value = data.data;
+  if (deleteUserList.value && deleteUserList.value.length > 0) {
+    deleteUserList.value.forEach((e) => {
+      e.nodeName = task.value.nodeName;
+    });
+  }
+  deleteSignatureVisible.value = true;
 };
 
 /**

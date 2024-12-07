@@ -275,3 +275,15 @@ export const taskOperation = (data: TaskOperationBo, operation: string) => {
     data: data
   });
 };
+
+/**
+ * 获取当前任务办理人
+ * @param taskId 任务id
+ * @returns
+ */
+export const getUserListTaskId = (taskId: string) => {
+  return request({
+    url: `/workflow/task/getUserListTaskId/${taskId}`,
+    method: 'get'
+  });
+};

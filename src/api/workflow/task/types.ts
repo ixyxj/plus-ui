@@ -26,6 +26,7 @@ export interface FlowTaskVO {
   flowCode: string;
   flowStatus: string;
   nodeType: number;
+  nodeRatio: string | number;
   wfNodeConfigVo?: NodeConfigVO;
   wfDefinitionConfigVo?: DefinitionConfigVO;
 }
