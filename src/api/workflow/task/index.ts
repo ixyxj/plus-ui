@@ -94,30 +94,6 @@ export const completeTask = (data: object) => {
 };
 
 /**
- * 认领任务
- * @param taskId
- * @returns {*}
- */
-export const claim = (taskId: string): any => {
-  return request({
-    url: '/workflow/task/claim/' + taskId,
-    method: 'post'
-  });
-};
-
-/**
- * 归还任务
- * @param taskId
- * @returns {*}
- */
-export const returnTask = (taskId: string): any => {
-  return request({
-    url: '/workflow/task/returnTask/' + taskId,
-    method: 'post'
-  });
-};
-
-/**
  * 任务驳回
  * @param data
  * @returns {*}
@@ -143,32 +119,6 @@ export const getTaskById = (taskId: string) => {
 };
 
 /**
- * 加签
- * @param data
- * @returns
- */
-export const addMultiInstanceExecution = (data: any) => {
-  return request({
-    url: '/workflow/task/addMultiInstanceExecution',
-    method: 'post',
-    data: data
-  });
-};
-
-/**
- * 减签
- * @param data
- * @returns
- */
-export const deleteMultiInstanceExecution = (data: any) => {
-  return request({
-    url: '/workflow/task/deleteMultiInstanceExecution',
-    method: 'post',
-    data: data
-  });
-};
-
-/**
  * 修改任务办理人
  * @param taskIds
  * @param userId
@@ -179,18 +129,6 @@ export const updateAssignee = (taskIdList: Array<string>, userId: string) => {
     url: `/workflow/task/updateAssignee/${userId}`,
     method: 'put',
     data: taskIdList
-  });
-};
-
-/**
- * 转办任务
- * @returns
- */
-export const transferTask = (data: any) => {
-  return request({
-    url: `/workflow/task/transferTask`,
-    method: 'post',
-    data: data
   });
 };
 
@@ -281,7 +219,7 @@ export const taskOperation = (data: TaskOperationBo, operation: string) => {
  * @param taskId 任务id
  * @returns
  */
-export const getUserListTaskId = (taskId: string) => {
+export const getUserListTaskId = (taskId: string | number) => {
   return request({
     url: `/workflow/task/getUserListTaskId/${taskId}`,
     method: 'get'

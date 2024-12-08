@@ -33,10 +33,10 @@
             <el-card shadow="hover">
               <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
                 <el-form-item label="流程定义名称" prop="name">
-                  <el-input v-model="queryParams.name" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
+                  <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item label="流程定义KEY" prop="key">
-                  <el-input v-model="queryParams.key" placeholder="请输入流程定义KEY" @keyup.enter="handleQuery" />
+                  <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义KEY" @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -158,17 +158,10 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  getPageByRunning,
-  getPageByFinish,
-  deleteRunAndHisInstance,
-  deleteFinishAndHisInstance,
-  deleteRunInstance,
-  getInstanceVariable
-} from '@/api/workflow/processInstance';
+import { getPageByRunning, getPageByFinish, deleteByInstanceIds, getInstanceVariable } from '@/api/workflow/processInstance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
-import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
+import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/processInstance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 import VueJsonPretty from 'vue-json-pretty';
@@ -183,8 +176,8 @@ const categoryTreeRef = ref<ElTreeInstance>();
 const loading = ref(true);
 // 选中数组
 const ids = ref<Array<any>>([]);
-// 选中业务id数组
-const businessKeys = ref<Array<any>>([]);
+// 选中实例id数组
+const instanceIds = ref<Array<number | string>>([]);
 // 非单个禁用
 const single = ref(true);
 // 非多个禁用
@@ -197,11 +190,11 @@ const total = ref(0);
 // 流程变量是否显示
 const variableVisible = ref(false);
 const variableLoading = ref(true);
-const variables = ref<string>('')
+const variables = ref<string>('');
 //流程定义名称
 const processDefinitionName = ref();
 // 模型定义表格数据
-const processInstanceList = ref<ProcessInstanceVO[]>([]);
+const processInstanceList = ref<FlowInstanceVO[]>([]);
 const processDefinitionHistoryList = ref<Array<any>>([]);
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
@@ -221,10 +214,11 @@ const tab = ref('running');
 // 作废原因
 const deleteReason = ref('');
 // 查询参数
-const queryParams = ref<ProcessInstanceQuery>({
+const queryParams = ref<FlowInstanceQuery>({
   pageNum: 1,
   pageSize: 10,
   flowCode: undefined,
+  flowName: undefined,
   categoryCode: undefined
 });
 
@@ -277,9 +271,9 @@ const resetQuery = () => {
   handleQuery();
 };
 // 多选框选中数据
-const handleSelectionChange = (selection: ProcessInstanceVO[]) => {
+const handleSelectionChange = (selection: FlowInstanceVO[]) => {
   ids.value = selection.map((item: any) => item.id);
-  businessKeys.value = selection.map((item: any) => item.businessKey);
+  instanceIds.value = selection.map((item: FlowInstanceVO) => item.id);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -303,15 +297,15 @@ const getProcessInstanceFinishList = () => {
 };
 
 /** 删除按钮操作 */
-const handleDelete = async (row: any) => {
-  const businessKey = row.businessKey || businessKeys.value;
-  await proxy?.$modal.confirm('是否确认删除业务id为【' + businessKey + '】的数据项？');
+const handleDelete = async (row: FlowInstanceVO) => {
+  const instanceIdList = row.id || instanceIds.value;
+  await proxy?.$modal.confirm('是否确认删除？');
   loading.value = true;
   if ('running' === tab.value) {
-    await deleteRunAndHisInstance(businessKey).finally(() => (loading.value = false));
+    await deleteByInstanceIds(instanceIdList).finally(() => (loading.value = false));
     getProcessInstanceRunningList();
   } else {
-    await deleteFinishAndHisInstance(businessKey).finally(() => (loading.value = false));
+    await deleteByInstanceIds(instanceIdList).finally(() => (loading.value = false));
     getProcessInstanceFinishList();
   }
   proxy?.$modal.msgSuccess('删除成功');
@@ -326,7 +320,7 @@ const changeTab = async (data: string) => {
   }
 };
 /** 作废按钮操作 */
-const handleInvalid = async (row: ProcessInstanceVO) => {
+const handleInvalid = async (row: FlowInstanceVO) => {
   await proxy?.$modal.confirm('是否确认作废业务id为【' + row.businessId + '】的数据项？');
   loading.value = true;
   if ('running' === tab.value) {
@@ -334,7 +328,7 @@ const handleInvalid = async (row: ProcessInstanceVO) => {
       businessKey: row.businessId,
       deleteReason: deleteReason.value
     };
-    await deleteRunInstance(param).finally(() => (loading.value = false));
+    //await deleteRunInstance(param).finally(() => (loading.value = false));
     getProcessInstanceRunningList();
     proxy?.$modal.msgSuccess('操作成功');
   }
@@ -355,7 +349,7 @@ const handleView = (row) => {
 };
 
 //查询流程变量
-const handleInstanceVariable = async (row: ProcessInstanceVO) => {
+const handleInstanceVariable = async (row: FlowInstanceVO) => {
   variableLoading.value = true;
   variableVisible.value = true;
   processDefinitionName.value = row.flowName;
@@ -368,7 +362,7 @@ const handleInstanceVariable = async (row: ProcessInstanceVO) => {
  * json转为对象
  * @param data 原始数据
  */
- function formatToJsonObject(data: string) {
+function formatToJsonObject(data: string) {
   try {
     return JSON.parse(data);
   } catch (error) {

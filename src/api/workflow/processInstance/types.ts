@@ -1,14 +1,15 @@
 import { FlowTaskVO } from '@/api/workflow/task/types';
 
-export interface ProcessInstanceQuery extends PageQuery {
+export interface FlowInstanceQuery extends PageQuery {
   categoryCode?: string;
   flowCode?: string;
+  flowName?: string;
   createBy?: string;
   businessId?: string;
 }
 
-export interface ProcessInstanceVO extends BaseEntity {
-  id: string;
+export interface FlowInstanceVO extends BaseEntity {
+  id: string | number;
   definitionId: string;
   flowName: string;
   flowCode: string;

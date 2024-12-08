@@ -76,19 +76,14 @@
           </template>
         </el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column label="操作" align="center" :width="tab === 'finish' ? '80' : '151'">
+        <el-table-column label="操作" align="center" :width="tab === 'finish' ? '88' : '188'">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
-              <el-col :span="1.5">
+              <el-col :span="1.5" v-if="tab === 'waiting' || tab === 'finish'">
                 <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
-            </el-row>
-            <el-row v-if="scope.row.multiInstance" :gutter="10" class="mb8">
-              <el-col :span="1.5">
-                <el-button type="primary" size="small" icon="Remove" @click="deleteMultiInstanceUser(scope.row)">减签</el-button>
-              </el-col>
-              <el-col :span="1.5">
-                <el-button type="primary" size="small" icon="CirclePlus" @click="addMultiInstanceUser(scope.row)">加签</el-button>
+              <el-col :span="1.5" v-if="tab === 'waiting'">
+                <el-button type="primary" size="small" icon="Setting" @click="handleMeddle(scope.row)">流程干预</el-button>
               </el-col>
             </el-row>
           </template>
@@ -102,25 +97,24 @@
         @pagination="handleQuery"
       />
     </el-card>
-    <!-- 加签组件 -->
-    <multiInstanceUser ref="multiInstanceUserRef" :title="title" @submit-callback="handleQuery" />
     <!-- 选人组件 -->
     <UserSelect ref="userSelectRef" :multiple="false" @confirm-call-back="submitCallback"></UserSelect>
+    <!-- 选人组件 -->
+    <processMeddle ref="processMeddleRef" @submitCallback="getWaitingList"></processMeddle>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { getPageByAllTaskWait, getPageByAllTaskFinish, updateAssignee } from '@/api/workflow/task';
-import MultiInstanceUser from '@/components/Process/multiInstanceUser.vue';
 import UserSelect from '@/components/UserSelect';
-import { TaskQuery, FlowTaskVO, VariableVo } from '@/api/workflow/task/types';
+import { TaskQuery } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
-//审批记录组件
-//加签组件
-const multiInstanceUserRef = ref<InstanceType<typeof MultiInstanceUser>>();
+import processMeddle from '@/components/Process/processMeddle';
 //选人组件
 const userSelectRef = ref<InstanceType<typeof UserSelect>>();
+//流程干预组件
+const processMeddleRef = ref<InstanceType<typeof processMeddle>>();
 
 const queryFormRef = ref<ElFormInstance>();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -151,20 +145,6 @@ const queryParams = ref<TaskQuery>({
 });
 const tab = ref('waiting');
 
-//加签
-const addMultiInstanceUser = (row: FlowTaskVO) => {
-  if (multiInstanceUserRef.value) {
-    title.value = '加签人员';
-    multiInstanceUserRef.value.getAddMultiInstanceList(row.id, []);
-  }
-};
-//减签
-const deleteMultiInstanceUser = (row: FlowTaskVO) => {
-  if (multiInstanceUserRef.value) {
-    title.value = '减签人员';
-    multiInstanceUserRef.value.getDeleteMultiInstanceList(row.id);
-  }
-};
 /** 搜索按钮操作 */
 const handleQuery = () => {
   if ('waiting' === tab.value) {
@@ -238,6 +218,9 @@ const handleView = (row) => {
     type: 'view'
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
+};
+const handleMeddle = (row) => {
+  processMeddleRef.value.open(row.id);
 };
 onMounted(() => {
   getWaitingList();

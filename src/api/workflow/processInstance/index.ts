@@ -39,53 +39,6 @@ export const getFlowImage = (businessKey: string | number) => {
 };
 
 /**
- * 通过业务id获取历史流程图运行中，历史等节点
- */
-export const getHistoryList = (businessKey: string): AxiosPromise<Record<string, any>> => {
-  return request({
-    url: `/workflow/processInstance/getHistoryList/${businessKey}` + '?t' + Math.random(),
-    method: 'get'
-  });
-};
-
-/**
- * 作废
- * @param data 参数
- * @returns
- */
-export const deleteRunInstance = (data: object) => {
-  return request({
-    url: `/workflow/processInstance/deleteRunInstance`,
-    method: 'post',
-    data: data
-  });
-};
-
-/**
- * 运行中的实例 删除程实例，删除历史记录，删除业务与流程关联信息
- * @param businessKey 业务id
- * @returns
- */
-export const deleteRunAndHisInstance = (businessKey: string | string[]) => {
-  return request({
-    url: `/workflow/processInstance/deleteRunAndHisInstance/${businessKey}`,
-    method: 'delete'
-  });
-};
-
-/**
- * 已完成的实例 删除程实例，删除历史记录，删除业务与流程关联信息
- * @param businessKey 业务id
- * @returns
- */
-export const deleteFinishAndHisInstance = (businessKey: string | string[]) => {
-  return request({
-    url: `/workflow/processInstance/deleteFinishAndHisInstance/${businessKey}`,
-    method: 'delete'
-  });
-};
-
-/**
  * 分页查询当前登录人单据
  * @param query
  * @returns {*}
@@ -122,14 +75,23 @@ export const getInstanceVariable = (instanceId: string) => {
     method: 'get'
   });
 };
+
+/**
+ * 删除
+ * @param instanceIds 流程实例id
+ * @returns
+ */
+export const deleteByInstanceIds = (instanceIds: Array<string | number> | string | number) => {
+  return request({
+    url: `/workflow/processInstance/deleteByInstanceIds/${instanceIds}`,
+    method: 'delete'
+  });
+};
+
 export default {
   getPageByRunning,
   getPageByFinish,
   getFlowImage,
-  getHistoryList,
-  deleteRunInstance,
-  deleteRunAndHisInstance,
-  deleteFinishAndHisInstance,
   getPageByCurrent,
   cancelProcessApply
 };
