@@ -27,14 +27,19 @@
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openDelegateTask"> 委托 </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openTransferTask"> 转办 </el-button>
         <el-button
-          v-if="task.flowStatus === 'waiting' && task.nodeRatio > 0"
+          v-if="task.flowStatus === 'waiting' && Number(task.nodeRatio) > 0"
           :disabled="buttonDisabled"
           type="primary"
           @click="openMultiInstanceUser"
         >
           加签
         </el-button>
-        <el-button v-if="task.flowStatus === 'waiting' && task.nodeRatio > 0" :disabled="buttonDisabled" type="primary" @click="handleTaskUser">
+        <el-button
+          v-if="task.flowStatus === 'waiting' && Number(task.nodeRatio) > 0"
+          :disabled="buttonDisabled"
+          type="primary"
+          @click="handleTaskUser"
+        >
           减签
         </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="danger" @click="handleTerminationTask"> 终止 </el-button>
@@ -171,9 +176,6 @@ const backForm = ref<Record<string, any>>({
   variables: {},
   messageType: ['1']
 });
-const closeDialog = () => {
-  dialog.visible = false;
-};
 //打开弹窗
 const openDialog = (id?: string) => {
   selectCopyUserIds.value = undefined;
@@ -317,10 +319,12 @@ const deleteMultiInstanceUser = async (row) => {
     message: form.value.message
   });
   await taskOperation(taskOperationBo, 'reductionSignature').finally(() => {
-    dialog.visible = false;
-    emits('submitCallback');
-    proxy?.$modal.msgSuccess('操作成功');
+    loading.value = false;
+    buttonDisabled.value = false;
   });
+  dialog.visible = false;
+  emits('submitCallback');
+  proxy?.$modal.msgSuccess('操作成功');
 };
 //打开转办
 const openTransferTask = () => {
