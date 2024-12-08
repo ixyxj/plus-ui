@@ -92,12 +92,12 @@
                         <el-button size="small" type="primary" @click="handleInvalid(scope.row)">确认</el-button>
                       </div>
                       <template #reference>
-                        <el-button type="primary" size="small" icon="CircleClose">作废</el-button>
+                        <el-button type="danger" size="small" icon="CircleClose">作废</el-button>
                       </template>
                     </el-popover>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button type="danger" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
@@ -158,7 +158,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByRunning, getPageByFinish, deleteByInstanceIds, getInstanceVariable } from '@/api/workflow/processInstance';
+import { getPageByRunning, getPageByFinish, deleteByInstanceIds, getInstanceVariable, processInvalid } from '@/api/workflow/processInstance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/processInstance/types';
@@ -321,14 +321,14 @@ const changeTab = async (data: string) => {
 };
 /** 作废按钮操作 */
 const handleInvalid = async (row: FlowInstanceVO) => {
-  await proxy?.$modal.confirm('是否确认作废业务id为【' + row.businessId + '】的数据项？');
+  await proxy?.$modal.confirm('是否确认作废？');
   loading.value = true;
   if ('running' === tab.value) {
     let param = {
-      businessKey: row.businessId,
-      deleteReason: deleteReason.value
+      id: row.id,
+      comment: deleteReason.value
     };
-    //await deleteRunInstance(param).finally(() => (loading.value = false));
+    await processInvalid(param).finally(() => (loading.value = false));
     getProcessInstanceRunningList();
     proxy?.$modal.msgSuccess('操作成功');
   }

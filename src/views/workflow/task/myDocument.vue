@@ -78,7 +78,9 @@
                     <el-button type="primary" size="small" icon="View" @click="handleOpen(scope.row, 'view')">查看</el-button>
                   </el-col>
                   <el-col :span="1.5" v-if="scope.row.flowStatus === 'waiting'">
-                    <el-button type="primary" size="small" icon="Notification" @click="handleCancelProcessApply(scope.row.businessId)">撤销</el-button>
+                    <el-button type="primary" size="small" icon="Notification" @click="handleCancelProcessApply(scope.row.businessId)"
+                      >撤销</el-button
+                    >
                   </el-col>
                 </el-row>
               </template>
@@ -100,10 +102,10 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByCurrent, deleteRunAndHisInstance, cancelProcessApply } from '@/api/workflow/processInstance';
+import { getPageByCurrent, deleteByInstanceIds, cancelProcessApply } from '@/api/workflow/processInstance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
-import { ProcessInstanceQuery, ProcessInstanceVO } from '@/api/workflow/processInstance/types';
+import { ProcessInstanceQuery, FlowInstanceVO } from '@/api/workflow/processInstance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -114,7 +116,8 @@ const categoryTreeRef = ref<ElTreeInstance>();
 // 遮罩层
 const loading = ref(true);
 // 选中数组
-const businessIds = ref<Array<any>>([]);
+const businessIds = ref<Array<number | string>>([]);
+const instanceIds = ref<Array<number | string>>([]);
 // 非单个禁用
 const single = ref(true);
 // 非多个禁用
@@ -124,7 +127,7 @@ const showSearch = ref(true);
 // 总条数
 const total = ref(0);
 // 模型定义表格数据
-const processInstanceList = ref<ProcessInstanceVO[]>([]);
+const processInstanceList = ref<FlowInstanceVO[]>([]);
 
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
@@ -194,8 +197,9 @@ const resetQuery = () => {
   handleQuery();
 };
 // 多选框选中数据
-const handleSelectionChange = (selection: ProcessInstanceVO[]) => {
+const handleSelectionChange = (selection: FlowInstanceVO[]) => {
   businessIds.value = selection.map((item: any) => item.businessId);
+  instanceIds.value = selection.map((item: FlowInstanceVO) => item.id);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -210,12 +214,12 @@ const getList = () => {
 };
 
 /** 删除按钮操作 */
-const handleDelete = async (row: ProcessInstanceVO) => {
-  const businessKey = row.businessId || businessIds.value;
-  await proxy?.$modal.confirm('是否确认删除业务id为【' + businessKey + '】的数据项？');
+const handleDelete = async (row: FlowInstanceVO) => {
+  const instanceIdList = row.id || instanceIds.value;
+  await proxy?.$modal.confirm('是否确认删除？');
   loading.value = true;
   if ('running' === tab.value) {
-    await deleteRunAndHisInstance(businessKey).finally(() => (loading.value = false));
+    await deleteByInstanceIds(instanceIdList).finally(() => (loading.value = false));
     getList();
   }
   proxy?.$modal.msgSuccess('删除成功');
@@ -227,9 +231,9 @@ const handleCancelProcessApply = async (businessId: string) => {
   loading.value = true;
   if ('running' === tab.value) {
     let data = {
-      businessId:businessId,
-      message:'撤销流程！'
-    }
+      businessId: businessId,
+      message: '撤销流程！'
+    };
     await cancelProcessApply(data).finally(() => (loading.value = false));
     getList();
   }

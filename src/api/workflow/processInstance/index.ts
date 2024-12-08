@@ -87,6 +87,18 @@ export const deleteByInstanceIds = (instanceIds: Array<string | number> | string
     method: 'delete'
   });
 };
+/**
+ * 作废流程
+ * @param data 参数
+ * @returns
+ */
+export const processInvalid = (data: any) => {
+  return request({
+    url: `/workflow/processInstance/processInvalid`,
+    method: 'post',
+    data: data
+  });
+};
 
 export default {
   getPageByRunning,
