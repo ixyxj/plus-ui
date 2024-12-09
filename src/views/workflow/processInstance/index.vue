@@ -158,10 +158,10 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByRunning, getPageByFinish, deleteByInstanceIds, getInstanceVariable, processInvalid } from '@/api/workflow/processInstance';
+import { pageByRunning, pageByFinish, deleteByInstanceIds, instanceVariable, invalid } from 'src/api/workflow/instance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
-import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/processInstance/types';
+import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/instance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 import VueJsonPretty from 'vue-json-pretty';
@@ -280,7 +280,7 @@ const handleSelectionChange = (selection: FlowInstanceVO[]) => {
 //分页
 const getProcessInstanceRunningList = () => {
   loading.value = true;
-  getPageByRunning(queryParams.value).then((resp) => {
+  pageByRunning(queryParams.value).then((resp) => {
     processInstanceList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;
@@ -289,7 +289,7 @@ const getProcessInstanceRunningList = () => {
 //分页
 const getProcessInstanceFinishList = () => {
   loading.value = true;
-  getPageByFinish(queryParams.value).then((resp) => {
+  pageByFinish(queryParams.value).then((resp) => {
     processInstanceList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;
@@ -328,7 +328,7 @@ const handleInvalid = async (row: FlowInstanceVO) => {
       id: row.id,
       comment: deleteReason.value
     };
-    await processInvalid(param).finally(() => (loading.value = false));
+    await invalid(param).finally(() => (loading.value = false));
     getProcessInstanceRunningList();
     proxy?.$modal.msgSuccess('操作成功');
   }
@@ -353,7 +353,7 @@ const handleInstanceVariable = async (row: FlowInstanceVO) => {
   variableLoading.value = true;
   variableVisible.value = true;
   processDefinitionName.value = row.flowName;
-  let data = await getInstanceVariable(row.id);
+  let data = await instanceVariable(row.id);
   variables.value = data.data.variable;
   variableLoading.value = false;
 };

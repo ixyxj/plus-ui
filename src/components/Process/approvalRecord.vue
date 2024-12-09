@@ -56,7 +56,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import processApi from '@/api/workflow/processInstance';
+import processApi from 'src/api/workflow/instance';
 import { propTypes } from '@/utils/propTypes';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;

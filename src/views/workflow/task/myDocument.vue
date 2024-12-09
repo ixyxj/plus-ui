@@ -102,10 +102,10 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByCurrent, deleteByInstanceIds, cancelProcessApply } from '@/api/workflow/processInstance';
+import { pageByCurrent, deleteByInstanceIds, cancelProcessApply } from 'src/api/workflow/instance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
-import { ProcessInstanceQuery, FlowInstanceVO } from '@/api/workflow/processInstance/types';
+import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/instance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -140,7 +140,7 @@ interface CategoryOption {
 
 const tab = ref('running');
 // 查询参数
-const queryParams = ref<ProcessInstanceQuery>({
+const queryParams = ref<FlowInstanceQuery>({
   pageNum: 1,
   pageSize: 10,
   flowCode: undefined,
@@ -206,7 +206,7 @@ const handleSelectionChange = (selection: FlowInstanceVO[]) => {
 //分页
 const getList = () => {
   loading.value = true;
-  getPageByCurrent(queryParams.value).then((resp) => {
+  pageByCurrent(queryParams.value).then((resp) => {
     processInstanceList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;

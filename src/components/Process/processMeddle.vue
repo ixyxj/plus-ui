@@ -57,7 +57,7 @@ import { propTypes } from '@/utils/propTypes';
 import { FlowTaskVO, TaskOperationBo } from '@/api/workflow/task/types';
 import UserSelect from '@/components/UserSelect';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-import { getTaskById, taskOperation, getUserListTaskId, terminationTask } from '@/api/workflow/task';
+import { getTask, taskOperation, currentTaskAllUser, terminationTask } from '@/api/workflow/task';
 const props = defineProps({
   width: propTypes.string.def('50%'),
   height: propTypes.string.def('100%')
@@ -96,7 +96,7 @@ const task = ref<FlowTaskVO>({
 
 const open = (taskId: string) => {
   visible.value = true;
-  getTaskById(taskId).then((response) => {
+  getTask(taskId).then((response) => {
     loading.value = false;
     buttonDisabled.value = false;
     task.value = response.data;
@@ -201,7 +201,7 @@ const deleteMultiInstanceUser = async (row) => {
 };
 //获取办理人
 const handleTaskUser = async () => {
-  let data = await getUserListTaskId(task.value.id);
+  let data = await currentTaskAllUser(task.value.id);
   deleteUserList.value = data.data;
   if (deleteUserList.value && deleteUserList.value.length > 0) {
     deleteUserList.value.forEach((e) => {

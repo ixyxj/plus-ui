@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByTaskCopy } from '@/api/workflow/task';
+import { pageByTaskCopy } from '@/api/workflow/task';
 import { TaskQuery } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
@@ -110,7 +110,7 @@ const handleSelectionChange = (selection: any) => {
 //分页
 const getTaskCopyList = () => {
   loading.value = true;
-  getPageByTaskCopy(queryParams.value).then((resp) => {
+  pageByTaskCopy(queryParams.value).then((resp) => {
     taskList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;

@@ -89,7 +89,7 @@
 
 <script setup name="Leave" lang="ts">
 import { delLeave, listLeave } from '@/api/workflow/leave';
-import { cancelProcessApply } from '@/api/workflow/processInstance';
+import { cancelProcessApply } from 'src/api/workflow/instance';
 import { LeaveForm, LeaveQuery, LeaveVO } from '@/api/workflow/leave/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;

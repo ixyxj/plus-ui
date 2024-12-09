@@ -296,24 +296,14 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import {
-  listDefinition,
-  definitionXml,
-  deleteDefinition,
-  updateDefinitionState,
-  importDefinition,
-  getHisListByKey,
-  publish,
-  add,
-  copyDef
-} from '@/api/workflow/definition';
+import { listDefinition, definitionXml, deleteDefinition, active, importDef, getHisListByKey, publish, add, copy } from '@/api/workflow/definition';
 import { getByTableNameNotDefId, getByDefId, saveOrUpdate } from '@/api/workflow/definitionConfig';
 import ProcessPreview from './components/processPreview.vue';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { DefinitionConfigForm } from '@/api/workflow/definitionConfig/types';
-import { UploadRequestOptions, ElMessage, ElMessageBox } from 'element-plus';
+import { UploadRequestOptions } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -337,7 +327,7 @@ const multiple = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
 const uploadDialogLoading = ref(false);
-const processDefinitionList = ref<FlowDefinitionVo[]>([]);
+const processDefinitionList = ref<FlowDefinitionQuery[]>([]);
 const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
@@ -505,7 +495,7 @@ const handleProcessDefState = async (row: FlowDefinitionVo) => {
   }
   await proxy?.$modal.confirm(msg);
   loading.value = true;
-  await updateDefinitionState(row.id, row.activityStatus).finally(() => (loading.value = false));
+  await active(row.id, row.activityStatus).finally(() => (loading.value = false));
   await getList();
   proxy?.$modal.msgSuccess('操作成功');
 };
@@ -527,7 +517,7 @@ const handlerImportDefinition = (data: UploadRequestOptions): XMLHttpRequest => 
   uploadDialogLoading.value = true;
   formData.append('file', data.file);
   formData.append('categoryCode', selectCategory.value);
-  importDefinition(formData)
+  importDef(formData)
     .then(() => {
       uploadDialog.visible = false;
       proxy?.$modal.msgSuccess('部署成功');
@@ -634,7 +624,7 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    copyDef(row.id).then((resp) => {
+    copy(row.id).then((resp) => {
       if (resp.code === 200) {
         proxy?.$modal.msgSuccess('操作成功');
         getList();

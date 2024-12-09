@@ -8,7 +8,7 @@ import { DefinitionConfigVO, DefinitionConfigForm } from '@/api/workflow/definit
  */
 export const getByDefId = (definitionId: string | number): AxiosPromise<DefinitionConfigVO> => {
   return request({
-    url: '/workflow/definitionConfig/getByDefId/' + definitionId,
+    url: '/workflow/defConfig/getByDefId/' + definitionId,
     method: 'get'
   });
 };
@@ -19,7 +19,7 @@ export const getByDefId = (definitionId: string | number): AxiosPromise<Definiti
  */
 export const saveOrUpdate = (data: DefinitionConfigForm) => {
   return request({
-    url: '/workflow/definitionConfig/saveOrUpdate',
+    url: '/workflow/defConfig/saveOrUpdate',
     method: 'post',
     data: data
   });
@@ -31,7 +31,7 @@ export const saveOrUpdate = (data: DefinitionConfigForm) => {
  */
 export const deldefinitionConfig = (id: string | number | Array<string | number>) => {
   return request({
-    url: '/workflow/definitionConfig/' + id,
+    url: '/workflow/defConfig/' + id,
     method: 'delete'
   });
 };
@@ -43,7 +43,11 @@ export const deldefinitionConfig = (id: string | number | Array<string | number>
  */
 export const getByTableNameNotDefId = (tableName: string, definitionId: string | number) => {
   return request({
-    url: `/workflow/definitionConfig/getByTableNameNotDefId/${tableName}/${definitionId}`,
-    method: 'get'
+    url: `/workflow/defConfig/getByTableNameNotDefId`,
+    method: 'get',
+    params: {
+      tableName: tableName,
+      definitionId: definitionId
+    }
   });
 };

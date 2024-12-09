@@ -103,7 +103,7 @@
 import { ref } from 'vue';
 import { ComponentInternalInstance } from 'vue';
 import { ElForm } from 'element-plus';
-import { completeTask, backProcess, getTaskById, taskOperation, terminationTask, getBackTaskNode, getUserListTaskId } from '@/api/workflow/task';
+import { completeTask, backProcess, getTask, taskOperation, terminationTask, getBackTaskNode, currentTaskAllUser } from '@/api/workflow/task';
 import UserSelect from '@/components/UserSelect';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 import { UserVO } from '@/api/system/user/types';
@@ -187,7 +187,7 @@ const openDialog = (id?: string) => {
   loading.value = true;
   buttonDisabled.value = true;
   nextTick(() => {
-    getTaskById(taskId.value).then((response) => {
+    getTask(taskId.value).then((response) => {
       task.value = response.data;
       loading.value = false;
       buttonDisabled.value = false;
@@ -397,7 +397,7 @@ const handleTerminationTask = async () => {
   proxy?.$modal.msgSuccess('操作成功');
 };
 const handleTaskUser = async () => {
-  let data = await getUserListTaskId(taskId.value);
+  let data = await currentTaskAllUser(taskId.value);
   deleteUserList.value = data.data;
   if (deleteUserList.value && deleteUserList.value.length > 0) {
     deleteUserList.value.forEach((e) => {

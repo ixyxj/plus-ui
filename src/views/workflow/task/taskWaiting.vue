@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByTaskWait } from '@/api/workflow/task';
+import { pageByTaskWait } from '@/api/workflow/task';
 import { TaskQuery, FlowTaskVO } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
@@ -123,7 +123,7 @@ const handleSelectionChange = (selection: any) => {
 //分页
 const getWaitingList = () => {
   loading.value = true;
-  getPageByTaskWait(queryParams.value).then((resp) => {
+  pageByTaskWait(queryParams.value).then((resp) => {
     taskList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;

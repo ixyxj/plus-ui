@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByTaskFinish } from '@/api/workflow/task';
+import { pageByTaskFinish } from '@/api/workflow/task';
 import { TaskQuery, FlowTaskVO } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
@@ -123,7 +123,7 @@ const handleSelectionChange = (selection: any) => {
 };
 const getFinishList = () => {
   loading.value = true;
-  getPageByTaskFinish(queryParams.value).then((resp) => {
+  pageByTaskFinish(queryParams.value).then((resp) => {
     taskList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;

@@ -40,7 +40,7 @@ import { ModuleDeclaration } from 'didi';
 import type { Canvas, ModdleElement } from 'bpmn';
 import EventBus from 'diagram-js/lib/core/EventBus';
 import Overlays from 'diagram-js/lib/features/overlays/Overlays';
-import processApi from '@/api/workflow/processInstance/index';
+import processApi from '@/api/workflow/instance/index';
 
 const canvas = ref<HTMLElement>();
 const modeler = ref<BpmnViewer>();

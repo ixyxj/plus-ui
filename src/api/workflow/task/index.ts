@@ -7,9 +7,9 @@ import { TaskQuery, FlowTaskVO, TaskOperationBo } from '@/api/workflow/task/type
  * @param query
  * @returns {*}
  */
-export const getPageByTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
+export const pageByTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
   return request({
-    url: '/workflow/task/getPageByTaskWait',
+    url: '/workflow/task/pageByTaskWait',
     method: 'get',
     params: query
   });
@@ -20,9 +20,9 @@ export const getPageByTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> 
  * @param query
  * @returns {*}
  */
-export const getPageByTaskFinish = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
+export const pageByTaskFinish = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
   return request({
-    url: '/workflow/task/getPageByTaskFinish',
+    url: '/workflow/task/pageByTaskFinish',
     method: 'get',
     params: query
   });
@@ -33,9 +33,9 @@ export const getPageByTaskFinish = (query: TaskQuery): AxiosPromise<FlowTaskVO[]
  * @param query
  * @returns {*}
  */
-export const getPageByTaskCopy = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
+export const pageByTaskCopy = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
   return request({
-    url: '/workflow/task/getPageByTaskCopy',
+    url: '/workflow/task/pageByTaskCopy',
     method: 'get',
     params: query
   });
@@ -111,16 +111,16 @@ export const backProcess = (data: any): any => {
  * @param taskId
  * @returns
  */
-export const getTaskById = (taskId: string) => {
+export const getTask = (taskId: string) => {
   return request({
-    url: '/workflow/task/getTaskById/' + taskId,
+    url: '/workflow/task/getTask/' + taskId,
     method: 'get'
   });
 };
 
 /**
  * 修改任务办理人
- * @param taskIds
+ * @param taskIdList
  * @param userId
  * @returns
  */
@@ -219,9 +219,9 @@ export const taskOperation = (data: TaskOperationBo, operation: string) => {
  * @param taskId 任务id
  * @returns
  */
-export const getUserListTaskId = (taskId: string | number) => {
+export const currentTaskAllUser = (taskId: string | number) => {
   return request({
-    url: `/workflow/task/getUserListTaskId/${taskId}`,
+    url: `/workflow/task/currentTaskAllUser/${taskId}`,
     method: 'get'
   });
 };

@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { FlowDefinitionQuery, FlowDefinitionVo, definitionXmlVO, FlowDefinitionForm } from '@/api/workflow/definition/types';
+import { FlowDefinitionQuery, definitionXmlVO, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { AxiosPromise } from 'axios';
 
 /**
@@ -55,10 +55,13 @@ export const deleteDefinition = (id: string | string[]) => {
  * @param definitionId 流程定义id
  * @returns
  */
-export const updateDefinitionState = (definitionId: string, activityStatus: boolean) => {
+export const active = (definitionId: string, activityStatus: boolean) => {
   return request({
-    url: `/workflow/definition/updateDefinitionState/${definitionId}/${activityStatus}`,
-    method: 'put'
+    url: `/workflow/definition/active/${definitionId}`,
+    method: 'put',
+    params: {
+      activityStatus: activityStatus
+    }
   });
 };
 
@@ -66,9 +69,9 @@ export const updateDefinitionState = (definitionId: string, activityStatus: bool
  * 通过zip或xml部署流程定义
  * @returns
  */
-export function importDefinition(data: any) {
+export function importDef(data: any) {
   return request({
-    url: '/workflow/definition/importDefinition',
+    url: '/workflow/definition/importDef',
     method: 'post',
     data: data,
     headers: {
@@ -131,9 +134,9 @@ export const add = (data: FlowDefinitionForm) => {
  * @param id 流程定义id
  * @returns
  */
-export const copyDef = (id: string) => {
+export const copy = (id: string) => {
   return request({
-    url: `/workflow/definition/copyDef/${id}`,
+    url: `/workflow/definition/copy/${id}`,
     method: 'post'
   });
 };
