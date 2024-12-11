@@ -56,7 +56,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import processApi from 'src/api/workflow/instance';
+import { flowImage } from 'src/api/workflow/instance';
 import { propTypes } from '@/utils/propTypes';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -77,7 +77,7 @@ const init = async (businessKey: string | number) => {
   loading.value = true;
   tabActiveName.value = 'bpmn';
   historyList.value = [];
-  processApi.getFlowImage(businessKey).then((resp) => {
+  flowImage(businessKey).then((resp) => {
     if (resp.data) {
       historyList.value = resp.data.list;
       imgUrl.value = 'data:image/gif;base64,' + resp.data.image;
