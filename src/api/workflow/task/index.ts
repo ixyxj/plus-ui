@@ -46,9 +46,9 @@ export const pageByTaskCopy = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => 
  * @param query
  * @returns {*}
  */
-export const getPageByAllTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
+export const pageByAllTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
   return request({
-    url: '/workflow/task/getPageByAllTaskWait',
+    url: '/workflow/task/pageByAllTaskWait',
     method: 'get',
     params: query
   });
@@ -59,9 +59,9 @@ export const getPageByAllTaskWait = (query: TaskQuery): AxiosPromise<FlowTaskVO[
  * @param query
  * @returns {*}
  */
-export const getPageByAllTaskFinish = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
+export const pageByAllTaskFinish = (query: TaskQuery): AxiosPromise<FlowTaskVO[]> => {
   return request({
-    url: '/workflow/task/getPageByAllTaskFinish',
+    url: '/workflow/task/pageByAllTaskFinish',
     method: 'get',
     params: query
   });

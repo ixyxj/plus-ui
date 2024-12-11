@@ -158,7 +158,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pageByRunning, pageByFinish, deleteByInstanceIds, instanceVariable, invalid } from 'src/api/workflow/instance';
+import { pageByRunning, pageByFinish, deleteByInstanceIds, instanceVariable, invalid } from '@/api/workflow/instance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/instance/types';

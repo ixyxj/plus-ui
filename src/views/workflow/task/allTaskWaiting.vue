@@ -105,7 +105,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageByAllTaskWait, getPageByAllTaskFinish, updateAssignee } from '@/api/workflow/task';
+import { pageByAllTaskWait, pageByAllTaskFinish, updateAssignee } from '@/api/workflow/task';
 import UserSelect from '@/components/UserSelect';
 import { TaskQuery } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
@@ -178,7 +178,7 @@ const changeTab = async (data: string) => {
 //分页
 const getWaitingList = () => {
   loading.value = true;
-  getPageByAllTaskWait(queryParams.value).then((resp) => {
+  pageByAllTaskWait(queryParams.value).then((resp) => {
     taskList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;
@@ -186,7 +186,7 @@ const getWaitingList = () => {
 };
 const getFinishList = () => {
   loading.value = true;
-  getPageByAllTaskFinish(queryParams.value).then((resp) => {
+  pageByAllTaskFinish(queryParams.value).then((resp) => {
     taskList.value = resp.rows;
     total.value = resp.total;
     loading.value = false;
