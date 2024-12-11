@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pageByCurrent, deleteByInstanceIds, cancelProcessApply } from 'src/api/workflow/instance';
+import { pageByCurrent, deleteByInstanceIds, cancelProcessApply } from '@/api/workflow/instance';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/instance/types';
