@@ -56,7 +56,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { flowImage } from 'src/api/workflow/instance';
+import { flowImage } from '@/api/workflow/instance';
 import { propTypes } from '@/utils/propTypes';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
