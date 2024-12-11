@@ -141,8 +141,6 @@
         </el-card>
       </el-col>
     </el-row>
-    <!-- 预览图片或xml -->
-    <process-preview ref="previewRef" />
 
     <!-- 部署文件 -->
     <el-dialog v-if="uploadDialog.visible" v-model="uploadDialog.visible" :title="uploadDialog.title" width="30%">
@@ -298,7 +296,6 @@
 <script lang="ts" setup name="processDefinition">
 import { listDefinition, definitionXml, deleteDefinition, active, importDef, getHisListByKey, publish, add, copy } from '@/api/workflow/definition';
 import { getByTableNameNotDefId, getByDefId, saveOrUpdate } from '@/api/workflow/definitionConfig';
-import ProcessPreview from './components/processPreview.vue';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
@@ -307,7 +304,6 @@ import { UploadRequestOptions } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const previewRef = ref<InstanceType<typeof ProcessPreview>>();
 const queryFormRef = ref<ElFormInstance>();
 const categoryTreeRef = ref<ElTreeInstance>();
 const definitionConfigForm = ref<DefinitionConfigForm>({});
@@ -449,18 +445,6 @@ const getProcessDefinitionHitoryList = async (id: string, key: string) => {
     processDefinitionHistoryList.value = resp.data.filter((item: any) => item.id !== id);
   }
   loading.value = false;
-};
-
-type PreviewType = 'xml' | 'bpmn';
-//预览 公共方法
-const clickPreview = async (id: string, type: PreviewType) => {
-  loading.value = true;
-  const resp = await definitionXml(id);
-  if (previewRef.value) {
-    const xmlStr = resp.data.xmlStr;
-    loading.value = false;
-    previewRef.value.openDialog(xmlStr, type);
-  }
 };
 
 /** 删除按钮操作 */
