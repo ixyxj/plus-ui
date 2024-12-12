@@ -4,14 +4,17 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="任务名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
+            <el-form-item label="申请人" prop="nickName">
+              <el-input v-model="queryParams.nickName" placeholder="请输入申请人" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="流程定义名称" label-width="100" prop="processDefinitionName">
-              <el-input v-model="queryParams.processDefinitionName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
+            <el-form-item label="任务名称" prop="nodeName">
+              <el-input v-model="queryParams.nodeName" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="流程定义KEY" label-width="100" prop="processDefinitionKey">
-              <el-input v-model="queryParams.processDefinitionKey" placeholder="请输入流程定义KEY" @keyup.enter="handleQuery" />
+            <el-form-item label="流程定义名称" label-width="100" prop="flowName">
+              <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="流程定义编码" label-width="100" prop="flowCode">
+              <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义编码" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -34,6 +37,7 @@
         <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"> </el-table-column>
         <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
         <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
+        <el-table-column align="center" prop="nickName" label="申请人"></el-table-column>
         <el-table-column align="center" label="办理人">
           <template #default="scope">
             <template v-if="scope.row.transactorNames">
@@ -96,9 +100,10 @@ const taskList = ref([]);
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
   pageSize: 10,
-  name: undefined,
-  processDefinitionName: undefined,
-  processDefinitionKey: undefined
+  nodeName: undefined,
+  flowName: undefined,
+  flowCode: undefined,
+  nickName: undefined
 });
 onMounted(() => {
   getWaitingList();

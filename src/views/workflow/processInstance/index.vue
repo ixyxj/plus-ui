@@ -20,23 +20,29 @@
         </el-card>
       </el-col>
       <el-col :lg="20" :xs="24">
-        <div class="mb-[10px]">
+<!--        <div class="mb-[10px]">
           <el-card shadow="hover" class="text-center">
             <el-radio-group v-model="tab" @change="changeTab(tab)">
               <el-radio-button value="running">运行中</el-radio-button>
               <el-radio-button value="finish">已完成</el-radio-button>
             </el-radio-group>
           </el-card>
-        </div>
+        </div>-->
         <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
           <div v-show="showSearch" class="mb-[10px]">
             <el-card shadow="hover">
-              <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
-                <el-form-item label="流程定义名称" prop="name">
+              <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true">
+                <el-form-item label="申请人" prop="nickName">
+                  <el-input v-model="queryParams.nickName" placeholder="请输入申请人" @keyup.enter="handleQuery" />
+                </el-form-item>
+                <el-form-item label="任务名称" prop="nodeName">
+                  <el-input v-model="queryParams.nodeName" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
+                </el-form-item>
+                <el-form-item label="流程定义名称" label-width="100" prop="flowName">
                   <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
                 </el-form-item>
-                <el-form-item label="流程定义KEY" prop="key">
-                  <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义KEY" @keyup.enter="handleQuery" />
+                <el-form-item label="流程定义编码" label-width="100" prop="flowCode">
+                  <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义编码" @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -55,7 +61,9 @@
               <right-toolbar v-model:show-search="showSearch" @query-table="handleQuery"></right-toolbar>
             </el-row>
           </template>
-
+          <el-tabs v-model="tab" @tab-click="changeTab">
+            <el-tab-pane name="running" label="运行中"> </el-tab-pane>
+            <el-tab-pane name="finish" label="已完成"> </el-tab-pane>
           <el-table v-loading="loading" border :data="processInstanceList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
@@ -64,7 +72,9 @@
                 <span>{{ scope.row.flowName }}v{{ scope.row.version }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="flowCode" label="流程定义KEY"></el-table-column>
+            <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
+            <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
+            <el-table-column align="center" prop="nickName" label="申请人"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="90">
               <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>
@@ -97,7 +107,7 @@
                     </el-popover>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button type="danger" size="small" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button type="danger" size="small" icon="Delete" @click="handleDelete(scope.row)">删除 </el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
@@ -105,7 +115,7 @@
                     <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
                   </el-col>
                   <el-col :span="1.5">
-                    <el-button type="primary" size="small" icon="Document" @click="handleInstanceVariable(scope.row)">变量</el-button>
+                    <el-button type="primary" size="small" icon="Document" @click="handleInstanceVariable(scope.row)"> 变量 </el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -118,6 +128,7 @@
             :total="total"
             @pagination="handleQuery"
           />
+          </el-tabs>
         </el-card>
       </el-col>
     </el-row>
@@ -125,6 +136,7 @@
       <el-table v-loading="loading" :data="processDefinitionHistoryList">
         <el-table-column fixed align="center" type="index" label="序号" width="60"></el-table-column>
         <el-table-column fixed align="center" prop="name" label="流程定义名称"></el-table-column>
+        <el-table-column fixed align="center" prop="nodeName" label="任务名称"></el-table-column>
         <el-table-column align="center" prop="key" label="标识Key"></el-table-column>
         <el-table-column align="center" prop="version" label="版本号" width="90">
           <template #default="scope"> v{{ scope.row.version }}.0</template>
@@ -217,8 +229,10 @@ const deleteReason = ref('');
 const queryParams = ref<FlowInstanceQuery>({
   pageNum: 1,
   pageSize: 10,
-  flowCode: undefined,
+  nodeName: undefined,
   flowName: undefined,
+  flowCode: undefined,
+  nickName: undefined,
   categoryCode: undefined
 });
 
@@ -313,7 +327,7 @@ const handleDelete = async (row: FlowInstanceVO) => {
 const changeTab = async (data: string) => {
   processInstanceList.value = [];
   queryParams.value.pageNum = 1;
-  if ('running' === data) {
+  if ('running' === data.paneName) {
     getProcessInstanceRunningList();
   } else {
     getProcessInstanceFinishList();
@@ -369,6 +383,7 @@ function formatToJsonObject(data: string) {
     return data;
   }
 }
+
 onMounted(() => {
   getProcessInstanceRunningList();
   getTreeselect();

@@ -47,7 +47,7 @@
             <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
             <el-table-column v-if="false" align="center" prop="id" label="id"></el-table-column>
             <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"> </el-table-column>
-            <el-table-column align="center" prop="flowCode" label="流程定义KEY"></el-table-column>
+            <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="90">
               <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>

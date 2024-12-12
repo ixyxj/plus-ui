@@ -1,9 +1,10 @@
 import { NodeConfigVO } from '@/api/workflow/nodeConfig/types';
 import { DefinitionConfigVO } from '@/api/workflow/definitionConfig/types';
 export interface TaskQuery extends PageQuery {
-  name?: string;
-  processDefinitionKey?: string;
-  processDefinitionName?: string;
+  nodeName?: string;
+  flowCode?: string;
+  flowName?: string;
+  nickName?: string;
 }
 
 export interface ParticipantVo {
