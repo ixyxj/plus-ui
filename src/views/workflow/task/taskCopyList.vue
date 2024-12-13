@@ -4,9 +4,6 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="申请人" prop="nickName">
-              <el-input v-model="queryParams.nickName" placeholder="请输入申请人" @keyup.enter="handleQuery" />
-            </el-form-item>
             <el-form-item label="任务名称" prop="nodeName">
               <el-input v-model="queryParams.nodeName" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
             </el-form-item>
@@ -92,7 +89,6 @@ const queryParams = ref<TaskQuery>({
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined,
-  nickName: undefined
 });
 /** 搜索按钮操作 */
 const handleQuery = () => {

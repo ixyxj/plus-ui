@@ -4,7 +4,7 @@ export interface TaskQuery extends PageQuery {
   nodeName?: string;
   flowCode?: string;
   flowName?: string;
-  nickName?: string;
+  createByIds?: string[] | number[];
 }
 
 export interface ParticipantVo {

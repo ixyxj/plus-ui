@@ -4,8 +4,10 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="申请人" prop="nickName">
-              <el-input v-model="queryParams.nickName" placeholder="请输入申请人" @keyup.enter="handleQuery" />
+            <el-form-item>
+              <el-badge :value="userSelectCount" :max="10" class="item">
+                <el-button type="primary" @click="openUserSelect">选择申请人</el-button>
+              </el-badge>
             </el-form-item>
             <el-form-item label="任务名称" prop="nodeName">
               <el-input v-model="queryParams.nodeName" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
@@ -34,10 +36,10 @@
       <el-table v-loading="loading" border :data="taskList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
-        <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"> </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"></el-table-column>
         <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
         <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
-        <el-table-column align="center" prop="nickName" label="申请人"></el-table-column>
+        <el-table-column align="center" prop="createByName" label="申请人"></el-table-column>
         <el-table-column align="center" label="办理人">
           <template #default="scope">
             <template v-if="scope.row.transactorNames">
@@ -46,7 +48,7 @@
               </el-tag>
             </template>
             <template v-else>
-              <el-tag type="success"> 无 </el-tag>
+              <el-tag type="success"> 无</el-tag>
             </template>
           </template>
         </el-table-column>
@@ -70,6 +72,8 @@
         @pagination="handleQuery"
       />
     </el-card>
+    <!-- 申请人 -->
+    <UserSelect ref="userSelectRef" :multiple="true" :data="selectUserIds" @confirm-call-back="userSelectCallBack"></UserSelect>
   </div>
 </template>
 
@@ -78,8 +82,14 @@ import { pageByTaskWait } from '@/api/workflow/task';
 import { TaskQuery, FlowTaskVO } from '@/api/workflow/task/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+import UserSelect from '@/components/UserSelect';
+import { ref } from 'vue';
+import { UserVO } from '@/api/system/user/types';
+
+const userSelectRef = ref<InstanceType<typeof UserSelect>>();
 //提交组件
 const queryFormRef = ref<ElFormInstance>();
 // 遮罩层
@@ -96,6 +106,11 @@ const showSearch = ref(true);
 const total = ref(0);
 // 模型定义表格数据
 const taskList = ref([]);
+
+//申请人id
+const selectUserIds = ref<Array<number | string>>([]);
+//申请人选择数量
+const userSelectCount = ref(0);
 // 查询参数
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
@@ -103,7 +118,7 @@ const queryParams = ref<TaskQuery>({
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined,
-  nickName: undefined
+  createByIds: []
 });
 onMounted(() => {
   getWaitingList();
@@ -117,6 +132,8 @@ const resetQuery = () => {
   queryFormRef.value?.resetFields();
   queryParams.value.pageNum = 1;
   queryParams.value.pageSize = 10;
+  queryParams.value.createByIds = [];
+  userSelectCount.value = 0;
   handleQuery();
 };
 // 多选框选中数据
@@ -144,5 +161,18 @@ const handleOpen = async (row: FlowTaskVO) => {
     type: 'approval'
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
+};
+//打开申请人选择
+const openUserSelect = () => {
+  userSelectRef.value.open();
+};
+//确认选择申请人
+const userSelectCallBack = (data: UserVO[]) => {
+  userSelectCount.value = 0;
+  if (data && data.length > 0) {
+    userSelectCount.value = data.length;
+    selectUserIds.value = data.map((item) => item.userId);
+    queryParams.value.createByIds = selectUserIds.value;
+  }
 };
 </script>

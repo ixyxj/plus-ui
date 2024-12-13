@@ -4,8 +4,10 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="申请人" prop="nickName">
-              <el-input v-model="queryParams.nickName" placeholder="请输入申请人" @keyup.enter="handleQuery" />
+            <el-form-item>
+              <el-badge :value="userSelectCount" :max="10" class="item">
+                <el-button type="primary" @click="openUserSelect">选择申请人</el-button>
+              </el-badge>
             </el-form-item>
             <el-form-item label="任务名称" prop="nodeName">
               <el-input v-model="queryParams.nodeName" placeholder="请输入任务名称" @keyup.enter="handleQuery" />
@@ -40,7 +42,7 @@
           <template #default="scope"> v{{ scope.row.version }}.0</template>
         </el-table-column>
         <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
-        <el-table-column align="center" prop="nickName" label="申请人"></el-table-column>
+        <el-table-column align="center" prop="createByName" label="申请人"></el-table-column>
         <el-table-column align="center" prop="approverName" label="办理人">
           <template #default="scope">
             <el-tag type="success">
@@ -73,6 +75,8 @@
         @pagination="handleQuery"
       />
     </el-card>
+    <!-- 申请人 -->
+    <UserSelect ref="userSelectRef" :multiple="true" :data="selectUserIds" @confirm-call-back="userSelectCallBack"></UserSelect>
   </div>
 </template>
 
@@ -86,6 +90,11 @@ const queryFormRef = ref<ElFormInstance>();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
 const { wf_task_status } = toRefs<any>(proxy?.useDict('wf_task_status'));
+import UserSelect from '@/components/UserSelect';
+import { ref } from 'vue';
+import { UserVO } from '@/api/system/user/types';
+
+const userSelectRef = ref<InstanceType<typeof UserSelect>>();
 // 遮罩层
 const loading = ref(true);
 // 选中数组
@@ -107,8 +116,12 @@ const queryParams = ref<TaskQuery>({
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined,
-  nickName: undefined
+  createByIds: []
 });
+//申请人id
+const selectUserIds = ref<Array<number | string>>([]);
+//申请人选择数量
+const userSelectCount = ref(0);
 /** 搜索按钮操作 */
 const handleQuery = () => {
   getFinishList();
@@ -118,6 +131,8 @@ const resetQuery = () => {
   queryFormRef.value?.resetFields();
   queryParams.value.pageNum = 1;
   queryParams.value.pageSize = 10;
+  queryParams.value.createByIds = [];
+  userSelectCount.value = 0;
   handleQuery();
 };
 // 多选框选中数据
@@ -145,7 +160,19 @@ const handleView = (row: FlowTaskVO) => {
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
 };
-
+//打开申请人选择
+const openUserSelect = () => {
+  userSelectRef.value.open();
+};
+//确认选择申请人
+const userSelectCallBack = (data: UserVO[]) => {
+  userSelectCount.value = 0;
+  if (data && data.length > 0) {
+    userSelectCount.value = data.length;
+    selectUserIds.value = data.map((item) => item.userId);
+    queryParams.value.createByIds = selectUserIds.value;
+  }
+};
 onMounted(() => {
   getFinishList();
 });
