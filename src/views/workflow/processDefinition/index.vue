@@ -150,9 +150,9 @@
           <el-tree-select
             v-model="selectCategory"
             :data="categoryOptions"
-            :props="{ value: 'categoryCode', label: 'categoryName', children: 'children' }"
+            :props="{ value: 'id', label: 'categoryName', children: 'children' }"
             filterable
-            value-key="categoryCode"
+            value-key="id"
             :render-after-expand="false"
             check-strictly
             style="width: 240px"
@@ -269,9 +269,9 @@
             <el-tree-select
               v-model="form.category"
               :data="categoryOptions"
-              :props="{ value: 'categoryCode', label: 'categoryName', children: 'children' }"
+              :props="{ value: 'id', label: 'categoryName', children: 'children' }"
               filterable
-              value-key="categoryCode"
+              value-key="id"
               :render-after-expand="false"
               check-strictly
               style="width: 100%"
@@ -357,7 +357,7 @@ const queryParams = ref<FlowDefinitionQuery>({
   pageSize: 10,
   flowName: undefined,
   flowCode: undefined,
-  categoryCode: undefined
+  category: undefined
 });
 const rules = {
   category: [{ required: true, message: '分类名称不能为空', trigger: 'blur' }],
@@ -377,9 +377,9 @@ onMounted(() => {
 
 /** 节点单击事件 */
 const handleNodeClick = (data: CategoryVO) => {
-  queryParams.value.categoryCode = data.categoryCode;
-  if (data.categoryCode === 'ALL') {
-    queryParams.value.categoryCode = '';
+  queryParams.value.category = data.id;
+  if (data.id === 'ALL') {
+    queryParams.value.category = '';
   }
   handleQuery();
 };
@@ -402,7 +402,7 @@ watchEffect(
 const getTreeselect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
-  const data: CategoryOption = { categoryCode: 'ALL', categoryName: '顶级节点', children: [] };
+  const data: CategoryOption = { id: 'ALL', categoryName: '顶级节点', children: [] };
   data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
   categoryOptions.value.push(data);
 };
@@ -415,7 +415,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.categoryCode = '';
+  queryParams.value.category = '';
   queryParams.value.pageNum = 1;
   queryParams.value.pageSize = 10;
   handleQuery();
@@ -500,7 +500,7 @@ const handlerImportDefinition = (data: UploadRequestOptions): XMLHttpRequest => 
   let formData = new FormData();
   uploadDialogLoading.value = true;
   formData.append('file', data.file);
-  formData.append('categoryCode', selectCategory.value);
+  formData.append('categoryId', selectCategory.value);
   importDef(formData)
     .then(() => {
       uploadDialog.visible = false;
@@ -585,6 +585,7 @@ const designView = async (row: FlowDefinitionVo) => {
  * 新增
  */
 const handleAdd = async () => {
+  defFormRef.value?.resetFields();
   modelDialog.visible = true;
 };
 //保存
