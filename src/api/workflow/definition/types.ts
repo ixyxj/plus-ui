@@ -1,8 +1,7 @@
-import { DefinitionConfigVO } from '@/api/workflow/definitionConfig/types';
 export interface FlowDefinitionQuery extends PageQuery {
   flowCode?: string;
   flowName?: string;
-  categoryCode?: string;
+  category: string;
   isPublish?: number;
 }
 
@@ -15,7 +14,6 @@ export interface FlowDefinitionVo {
   activityStatus: boolean;
   createTime: Date;
   updateTime: Date;
-  wfDefinitionConfigVo: DefinitionConfigVO;
 }
 
 export interface FlowDefinitionForm {

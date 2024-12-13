@@ -6,9 +6,6 @@
           <el-form-item label="分类名称" prop="categoryName">
             <el-input v-model="queryParams.categoryName" placeholder="请输入分类名称" clearable @keyup.enter="handleQuery" />
           </el-form-item>
-          <el-form-item label="分类编码" prop="categoryCode">
-            <el-input v-model="queryParams.categoryCode" placeholder="请输入分类编码" clearable @keyup.enter="handleQuery" />
-          </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
             <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -38,7 +35,6 @@
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column label="分类名称" prop="categoryName" />
-        <el-table-column label="分类编码" align="center" prop="categoryCode" />
         <el-table-column label="排序" align="center" prop="sortNum" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
@@ -70,9 +66,6 @@
         </el-form-item>
         <el-form-item label="分类名称" prop="categoryName">
           <el-input v-model="form.categoryName" placeholder="请输入分类名称" />
-        </el-form-item>
-        <el-form-item label="分类编码" prop="categoryCode">
-          <el-input v-model="form.categoryCode" placeholder="请输入分类编码" />
         </el-form-item>
         <el-form-item label="排序" prop="sortNum">
           <el-input-number v-model="form.sortNum" placeholder="请输入排序" controls-position="right" :min="0" />
@@ -119,7 +112,6 @@ const dialog = reactive<DialogOption>({
 const initFormData: CategoryForm = {
   id: undefined,
   categoryName: undefined,
-  categoryCode: undefined,
   parentId: undefined,
   sortNum: 0
 };
@@ -129,13 +121,11 @@ const data = reactive<PageData<CategoryForm, CategoryQuery>>({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    categoryName: undefined,
-    categoryCode: undefined
+    categoryName: undefined
   },
   rules: {
     id: [{ required: true, message: '主键不能为空', trigger: 'blur' }],
     categoryName: [{ required: true, message: '分类名称不能为空', trigger: 'blur' }],
-    categoryCode: [{ required: true, message: '分类编码不能为空', trigger: 'blur' }],
     parentId: [{ required: true, message: '父级id不能为空', trigger: 'blur' }]
   }
 });

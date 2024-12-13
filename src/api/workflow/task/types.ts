@@ -1,5 +1,3 @@
-import { NodeConfigVO } from '@/api/workflow/nodeConfig/types';
-import { DefinitionConfigVO } from '@/api/workflow/definitionConfig/types';
 export interface TaskQuery extends PageQuery {
   nodeName?: string;
   flowCode?: string;
@@ -29,8 +27,6 @@ export interface FlowTaskVO {
   nodeType: number;
   nodeRatio: string | number;
   version?: string;
-  wfNodeConfigVo?: NodeConfigVO;
-  wfDefinitionConfigVo?: DefinitionConfigVO;
 }
 
 export interface VariableVo {

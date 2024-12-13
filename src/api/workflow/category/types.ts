@@ -10,11 +10,6 @@ export interface CategoryVO {
   categoryName: string;
 
   /**
-   * 分类编码
-   */
-  categoryCode: string;
-
-  /**
    * 父级id
    */
   parentId: string | number;
@@ -39,11 +34,6 @@ export interface CategoryForm extends BaseEntity {
   categoryName?: string;
 
   /**
-   * 分类编码
-   */
-  categoryCode?: string;
-
-  /**
    * 父级id
    */
   parentId?: string | number;
@@ -59,9 +49,4 @@ export interface CategoryQuery extends PageQuery {
    * 分类名称
    */
   categoryName?: string;
-
-  /**
-   * 分类编码
-   */
-  categoryCode?: string;
 }

@@ -75,14 +75,7 @@
                 <el-tag v-else type="danger">失效</el-tag>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="表名/表单KEY" width="120" :show-overflow-tooltip="true">
-              <template #default="scope">
-                <span v-if="scope.row.wfDefinitionConfigVo">
-                  {{ scope.row.wfDefinitionConfigVo.tableName }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" align="center" width="320" class-name="small-padding fixed-width">
+            <el-table-column fixed="right" label="操作" align="center" width="245" class-name="small-padding fixed-width">
               <template #default="scope">
                 <el-row :gutter="10" class="mb8">
                   <el-col :span="1.5">
@@ -112,9 +105,6 @@
                   </el-col>
                 </el-row>
                 <el-row :gutter="10" class="mb8">
-                  <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
-                  </el-col>
                   <el-col :span="1.5">
                     <el-button link type="primary" v-if="scope.row.isPublish === 0" icon="Pointer" size="small" @click="design(scope.row)"
                       >流程设计</el-button
@@ -196,7 +186,7 @@
             <el-tag v-else type="danger">失效</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="245" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
@@ -211,10 +201,10 @@
                 </el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button type="text" size="small" icon="Tickets" @click="handleDefinitionConfigOpen(scope.row)">绑定业务</el-button>
-              </el-col>
-              <el-col :span="1.5">
                 <el-button link type="primary" icon="Delete" size="small" @click="handleDelete(scope.row)">删除流程</el-button>
+              </el-col>
+              <el-col v-if="scope.row.isPublish === 0" :span="1.5">
+                <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
               </el-col>
             </el-row>
             <el-row :gutter="10" class="mb8">
@@ -224,41 +214,10 @@
               <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
                 <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
               </el-col>
-              <el-col v-if="scope.row.isPublish === 0" :span="1.5">
-                <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
-              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
-
-    <!-- 表单配置 -->
-    <el-dialog
-      v-model="definitionConfigDialog.visible"
-      :title="definitionConfigDialog.title"
-      width="650px"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <el-form :model="definitionConfigForm" label-width="auto">
-        <el-form-item label="流程KEY">
-          <el-input v-model="definitionConfigForm.processKey" disabled />
-        </el-form-item>
-        <el-form-item label="表名" prop="formId">
-          <el-input v-model="definitionConfigForm.tableName" placeholder="示例:test_leave" />
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="definitionConfigForm.remark" type="textarea" resize="none" />
-        </el-form-item>
-      </el-form>
-
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="definitionConfigDialog.visible = false">取消</el-button>
-          <el-button type="primary" @click="handlerSaveForm">保存</el-button>
-        </div>
-      </template>
     </el-dialog>
 
     <!-- 新增流程定义 -->
@@ -294,22 +253,19 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import { listDefinition, definitionXml, deleteDefinition, active, importDef, getHisListByKey, publish, add, copy } from '@/api/workflow/definition';
-import { getByTableNameNotDefId, getByDefId, saveOrUpdate } from '@/api/workflow/definitionConfig';
+import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, copy } from '@/api/workflow/definition';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
-import { DefinitionConfigForm } from '@/api/workflow/definitionConfig/types';
 import { UploadRequestOptions } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const queryFormRef = ref<ElFormInstance>();
 const categoryTreeRef = ref<ElTreeInstance>();
-const definitionConfigForm = ref<DefinitionConfigForm>({});
 
 type CategoryOption = {
-  categoryCode: string;
+  id: string;
   categoryName: string;
   children?: CategoryOption[];
 };
@@ -339,11 +295,6 @@ const uploadDialog = reactive<DialogOption>({
 const processDefinitionDialog = reactive<DialogOption>({
   visible: false,
   title: '历史版本'
-});
-
-const definitionConfigDialog = reactive<DialogOption>({
-  visible: false,
-  title: '流程定义配置'
 });
 
 const modelDialog = reactive<DialogOption>({
@@ -378,7 +329,7 @@ onMounted(() => {
 /** 节点单击事件 */
 const handleNodeClick = (data: CategoryVO) => {
   queryParams.value.category = data.id;
-  if (data.id === 'ALL') {
+  if (data.id === '0') {
     queryParams.value.category = '';
   }
   handleQuery();
@@ -402,7 +353,7 @@ watchEffect(
 const getTreeselect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
-  const data: CategoryOption = { id: 'ALL', categoryName: '顶级节点', children: [] };
+  const data: CategoryOption = { id: '0', categoryName: '顶级节点', children: [] };
   data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
   categoryOptions.value.push(data);
 };
@@ -500,7 +451,7 @@ const handlerImportDefinition = (data: UploadRequestOptions): XMLHttpRequest => 
   let formData = new FormData();
   uploadDialogLoading.value = true;
   formData.append('file', data.file);
-  formData.append('categoryId', selectCategory.value);
+  formData.append('category', selectCategory.value);
   importDef(formData)
     .then(() => {
       uploadDialog.visible = false;
@@ -511,48 +462,6 @@ const handlerImportDefinition = (data: UploadRequestOptions): XMLHttpRequest => 
       uploadDialogLoading.value = false;
     });
   return;
-};
-//打开流程定义配置
-const handleDefinitionConfigOpen = async (row: FlowDefinitionVo) => {
-  definitionConfigDialog.visible = true;
-  definitionConfigForm.value.processKey = row.flowCode;
-  definitionConfigForm.value.definitionId = row.id;
-  definitionConfigForm.value.version = row.version;
-  const resp = await getByDefId(row.id);
-  if (resp.data) {
-    definitionConfigForm.value = resp.data;
-  } else {
-    definitionConfigForm.value.tableName = undefined;
-    definitionConfigForm.value.remark = undefined;
-  }
-};
-//保存表单
-const handlerSaveForm = async () => {
-  getByTableNameNotDefId(definitionConfigForm.value.tableName, definitionConfigForm.value.definitionId).then((res) => {
-    if (res.data && res.data.length > 0) {
-      ElMessageBox.confirm('表名已被【' + res.data[0].processKey + '】版本v' + res.data[0].version + '.0绑定确认后将会删除绑定的流程KEY!', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        saveOrUpdate(definitionConfigForm.value).then((resp) => {
-          if (resp.code === 200) {
-            proxy?.$modal.msgSuccess('操作成功');
-            definitionConfigDialog.visible = false;
-            getList();
-          }
-        });
-      });
-    } else {
-      saveOrUpdate(definitionConfigForm.value).then((resp) => {
-        if (resp.code === 200) {
-          proxy?.$modal.msgSuccess('操作成功');
-          definitionConfigDialog.visible = false;
-          getList();
-        }
-      });
-    }
-  });
 };
 /**
  * 设计流程

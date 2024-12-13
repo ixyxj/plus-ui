@@ -226,7 +226,7 @@ const processDefinitionDialog = reactive<DialogOption>({
 });
 
 type CategoryOption = {
-  categoryCode: string;
+  id: string;
   categoryName: string;
   children?: CategoryOption[];
 };
@@ -247,14 +247,14 @@ const queryParams = ref<FlowInstanceQuery>({
   flowName: undefined,
   flowCode: undefined,
   createByIds: [],
-  categoryCode: undefined
+  category: undefined
 });
 
 /** 节点单击事件 */
 const handleNodeClick = (data: CategoryVO) => {
-  queryParams.value.categoryCode = data.categoryCode;
-  if (data.categoryCode === 'ALL') {
-    queryParams.value.categoryCode = '';
+  queryParams.value.category = data.id;
+  if (data.id === '0') {
+    queryParams.value.category = '';
   }
   handleQuery();
 };
@@ -277,7 +277,7 @@ watchEffect(
 const getTreeselect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
-  const data: CategoryOption = { categoryCode: 'ALL', categoryName: '顶级节点', children: [] };
+  const data: CategoryOption = { id: '0', categoryName: '顶级节点', children: [] };
   data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
   categoryOptions.value.push(data);
 };
@@ -293,7 +293,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.categoryCode = '';
+  queryParams.value.category = '';
   queryParams.value.pageNum = 1;
   queryParams.value.pageSize = 10;
   queryParams.value.createByIds = [];
@@ -369,8 +369,6 @@ const cancelPopover = async (index: any) => {
 /** 查看按钮操作 */
 const handleView = (row) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
     type: 'view'

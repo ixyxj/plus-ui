@@ -89,7 +89,7 @@ const leaveFormRef = ref<ElFormInstance>();
 
 const submitFormData = ref<StartProcessBo>({
   businessKey: '',
-  tableName: '',
+  flowCode: '',
   variables: {}
 });
 const taskVariables = ref<Record<string, any>>({});
@@ -186,7 +186,7 @@ const submitForm = (status: string) => {
 //提交申请
 const handleStartWorkFlow = async (data: LeaveVO) => {
   try {
-    submitFormData.value.tableName = 'test_leave';
+    submitFormData.value.flowCode = 'leaveFlow-serial1';
     submitFormData.value.businessKey = data.id;
     //流程变量
     taskVariables.value = {

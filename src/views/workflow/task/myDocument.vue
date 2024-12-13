@@ -133,7 +133,7 @@ const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
 
 interface CategoryOption {
-  categoryCode: string;
+  id: string;
   categoryName: string;
   children?: CategoryOption[];
 }
@@ -144,7 +144,7 @@ const queryParams = ref<FlowInstanceQuery>({
   pageNum: 1,
   pageSize: 10,
   flowCode: undefined,
-  categoryCode: undefined
+  category: undefined
 });
 
 onMounted(() => {
@@ -154,9 +154,9 @@ onMounted(() => {
 
 /** 节点单击事件 */
 const handleNodeClick = (data: CategoryVO) => {
-  queryParams.value.categoryCode = data.categoryCode;
-  if (data.categoryCode === 'ALL') {
-    queryParams.value.categoryCode = '';
+  queryParams.value.category = data.id;
+  if (data.id === '0') {
+    queryParams.value.category = '';
   }
   handleQuery();
 };
@@ -179,7 +179,7 @@ watchEffect(
 const getTreeselect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
-  const data: CategoryOption = { categoryCode: 'ALL', categoryName: '顶级节点', children: [] };
+  const data: CategoryOption = { id: '0', categoryName: '顶级节点', children: [] };
   data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
   categoryOptions.value.push(data);
 };
@@ -191,7 +191,7 @@ const handleQuery = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
-  queryParams.value.categoryCode = '';
+  queryParams.value.category = '';
   queryParams.value.pageNum = 1;
   queryParams.value.pageSize = 10;
   handleQuery();
@@ -243,8 +243,6 @@ const handleCancelProcessApply = async (businessId: string) => {
 //办理
 const handleOpen = async (row, type) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
     type: type

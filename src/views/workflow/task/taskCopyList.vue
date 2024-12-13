@@ -88,7 +88,7 @@ const queryParams = ref<TaskQuery>({
   pageSize: 10,
   nodeName: undefined,
   flowName: undefined,
-  flowCode: undefined,
+  flowCode: undefined
 });
 /** 搜索按钮操作 */
 const handleQuery = () => {
@@ -120,8 +120,6 @@ const getTaskCopyList = () => {
 /** 查看按钮操作 */
 const handleView = (row) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
     type: 'view'

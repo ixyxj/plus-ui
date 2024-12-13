@@ -145,59 +145,12 @@ export const terminationTask = (data: any) => {
 };
 
 /**
- * 查询流程变量
- * @returns
- */
-export const getInstanceVariable = (taskId: string) => {
-  return request({
-    url: `/workflow/task/getInstanceVariable/${taskId}`,
-    method: 'get'
-  });
-};
-
-/**
  * 获取可驳回得任务节点
  * @returns
  */
 export const getBackTaskNode = (processInstanceId: string) => {
   return request({
     url: `/workflow/task/getBackTaskNode/${processInstanceId}`,
-    method: 'get'
-  });
-};
-
-/**
- * 委托任务
- * @returns
- */
-export const delegateTask = (data: any) => {
-  return request({
-    url: `/workflow/task/delegateTask`,
-    method: 'post',
-    data: data
-  });
-};
-
-/**
- * 查询工作流任务用户选择加签人员
- * @param taskId
- * @returns {*}
- */
-export const getTaskUserIdsByAddMultiInstance = (taskId: string) => {
-  return request({
-    url: '/workflow/task/getTaskUserIdsByAddMultiInstance/' + taskId,
-    method: 'get'
-  });
-};
-
-/**
- * 查询工作流选择减签人员
- * @param taskId
- * @returns {*}
- */
-export const getListByDeleteMultiInstance = (taskId: string) => {
-  return request({
-    url: '/workflow/task/getListByDeleteMultiInstance/' + taskId,
     method: 'get'
   });
 };
