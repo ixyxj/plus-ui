@@ -31,17 +31,17 @@
                 sortable
                 align="center"
               ></el-table-column>
-              <el-table-column prop="attachmentList" width="100" label="附件" sortable align="center">
+              <el-table-column prop="attachmentList" width="120" label="附件" align="center">
                 <template #default="scope">
                   <el-popover v-if="scope.row.attachmentList && scope.row.attachmentList.length > 0" placement="right" :width="310" trigger="click">
                     <template #reference>
-                      <el-button style="margin-right: 16px">附件</el-button>
+                      <el-button type="primary" style="margin-right: 16px">附件</el-button>
                     </template>
                     <el-table border :data="scope.row.attachmentList">
-                      <el-table-column prop="name" width="202" :show-overflow-tooltip="true" label="附件名称"></el-table-column>
+                      <el-table-column prop="originalName" width="202" :show-overflow-tooltip="true" label="附件名称"></el-table-column>
                       <el-table-column prop="name" width="80" align="center" :show-overflow-tooltip="true" label="操作">
                         <template #default="tool">
-                          <el-button type="text" @click="handleDownload(tool.row.contentId)">下载</el-button>
+                          <el-button type="text" @click="handleDownload(tool.row.ossId)">下载</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -58,6 +58,7 @@
 <script lang="ts" setup>
 import { flowImage } from '@/api/workflow/instance';
 import { propTypes } from '@/utils/propTypes';
+import { listByIds } from '@/api/system/oss';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { wf_task_status } = toRefs<any>(proxy?.useDict('wf_task_status'));
@@ -81,9 +82,25 @@ const init = async (businessKey: string | number) => {
     if (resp.data) {
       historyList.value = resp.data.list;
       imgUrl.value = 'data:image/gif;base64,' + resp.data.image;
+      if (historyList.value.length > 0) {
+        historyList.value.forEach((item) => {
+          if(item.ext){
+            getIds(item.ext).then((res) => {
+              item.attachmentList = res.data;
+            });
+          }else{
+            item.attachmentList = [];
+          }
+        });
+      }
+      console.log(historyList.value,"2222222");
       loading.value = false;
     }
   });
+};
+const getIds = async (ids: string | number) => {
+  const res = await listByIds(ids);
+  return res;
 };
 
 /** 下载按钮操作 */
