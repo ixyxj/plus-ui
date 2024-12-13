@@ -9,7 +9,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item v-if="task.flowStatus === 'waiting'" label="附件">
-        <fileUpload v-model="form.fileId" :file-type="['doc', 'xls', 'ppt', 'txt', 'pdf', 'xlsx', 'docx', 'zip']" :file-size="'20'" />
+        <fileUpload v-model="form.fileId" :file-type="['png', 'jpg', 'jpeg', 'doc', 'docx', 'xlsx', 'xls', 'ppt', 'txt', 'pdf']" :file-size="20" />
       </el-form-item>
       <el-form-item label="抄送">
         <el-button type="primary" icon="Plus" circle @click="openUserSelectCopy" />
@@ -83,14 +83,14 @@
       </template>
     </el-dialog>
     <!-- 驳回结束 -->
-    <el-dialog v-model="deleteSignatureVisible" draggable title="减签人员" width="700px" height="400px" append-to-body :close-on-click-modal="false"
-      ><div>
+    <el-dialog v-model="deleteSignatureVisible" draggable title="减签人员" width="700px" height="400px" append-to-body :close-on-click-modal="false">
+      <div>
         <el-table :data="deleteUserList" border>
           <el-table-column prop="nodeName" label="任务名称" />
           <el-table-column prop="nickName" label="办理人" />
           <el-table-column label="操作" align="center" width="160">
             <template #default="scope">
-              <el-button type="danger" size="small" icon="Delete" @click="deleteMultiInstanceUser(scope.row)">删除</el-button>
+              <el-button type="danger" size="small" icon="Delete" @click="deleteMultiInstanceUser(scope.row)">删除 </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -105,9 +105,11 @@ import { ComponentInternalInstance } from 'vue';
 import { ElForm } from 'element-plus';
 import { completeTask, backProcess, getTask, taskOperation, terminationTask, getBackTaskNode, currentTaskAllUser } from '@/api/workflow/task';
 import UserSelect from '@/components/UserSelect';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 import { UserVO } from '@/api/system/user/types';
 import { FlowTaskVO, TaskOperationBo } from '@/api/workflow/task/types';
+
 const userSelectCopyRef = ref<InstanceType<typeof UserSelect>>();
 const transferTaskRef = ref<InstanceType<typeof UserSelect>>();
 const delegateTaskRef = ref<InstanceType<typeof UserSelect>>();
