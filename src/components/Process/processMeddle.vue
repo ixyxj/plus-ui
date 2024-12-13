@@ -10,7 +10,6 @@
     </el-descriptions>
     <template #footer>
       <span class="dialog-footer">
-        <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openDelegateTask"> 委托 </el-button>
         <el-button v-if="task.flowStatus === 'waiting'" :disabled="buttonDisabled" type="primary" @click="openTransferTask"> 转办 </el-button>
         <el-button
           v-if="task.flowStatus === 'waiting' && Number(task.nodeRatio) > 0"
@@ -33,8 +32,6 @@
     </template>
     <!-- 转办 -->
     <UserSelect ref="transferTaskRef" :multiple="false" @confirm-call-back="handleTransferTask"></UserSelect>
-    <!-- 委托 -->
-    <UserSelect ref="delegateTaskRef" :multiple="false" @confirm-call-back="handleDelegateTask"></UserSelect>
     <!-- 加签组件 -->
     <UserSelect ref="multiInstanceUserRef" :multiple="true" @confirm-call-back="addMultiInstanceUser"></UserSelect>
     <el-dialog v-model="deleteSignatureVisible" draggable title="减签人员" width="700px" height="400px" append-to-body :close-on-click-modal="false"
@@ -64,7 +61,6 @@ const props = defineProps({
 });
 const emits = defineEmits(['submitCallback']);
 const transferTaskRef = ref<InstanceType<typeof UserSelect>>();
-const delegateTaskRef = ref<InstanceType<typeof UserSelect>>();
 const multiInstanceUserRef = ref<InstanceType<typeof UserSelect>>();
 //遮罩层
 const loading = ref(true);
@@ -103,32 +99,6 @@ const open = (taskId: string) => {
   });
 };
 
-//打开委托
-const openDelegateTask = () => {
-  delegateTaskRef.value.open();
-};
-//委托
-const handleDelegateTask = async (data) => {
-  if (data && data.length > 0) {
-    const taskOperationBo = reactive<TaskOperationBo>({
-      userId: data[0].userId,
-      taskId: task.value.id,
-      message: ''
-    });
-    await proxy?.$modal.confirm('是否确认提交？');
-    loading.value = true;
-    buttonDisabled.value = true;
-    await taskOperation(taskOperationBo, 'delegateTask').finally(() => {
-      loading.value = false;
-      buttonDisabled.value = false;
-    });
-    visible.value = false;
-    emits('submitCallback');
-    proxy?.$modal.msgSuccess('操作成功');
-  } else {
-    proxy?.$modal.msgWarning('请选择用户！');
-  }
-};
 //打开转办
 const openTransferTask = () => {
   transferTaskRef.value.open();
