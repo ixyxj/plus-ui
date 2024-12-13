@@ -1,7 +1,7 @@
 import { DefinitionConfigVO } from '@/api/workflow/definitionConfig/types';
 export interface FlowDefinitionQuery extends PageQuery {
-  key?: string;
-  name?: string;
+  flowCode?: string;
+  flowName?: string;
   categoryCode?: string;
   isPublish?: number;
 }

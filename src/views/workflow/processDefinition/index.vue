@@ -24,11 +24,11 @@
           <div v-show="showSearch" class="mb-[10px]">
             <el-card shadow="hover">
               <el-form v-show="showSearch" ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
-                <el-form-item label="流程定义名称" prop="name">
-                  <el-input v-model="queryParams.name" placeholder="请输入流程定义名称" clearable @keyup.enter="handleQuery" />
+                <el-form-item label="流程定义名称" prop="flowName">
+                  <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" clearable @keyup.enter="handleQuery" />
                 </el-form-item>
-                <el-form-item label="流程定义KEY" prop="key">
-                  <el-input v-model="queryParams.key" placeholder="请输入流程定义KEY" clearable @keyup.enter="handleQuery" />
+                <el-form-item label="流程定义KEY" prop="flowCode">
+                  <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义KEY" clearable @keyup.enter="handleQuery" />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -355,8 +355,8 @@ const modelDialog = reactive<DialogOption>({
 const queryParams = ref<FlowDefinitionQuery>({
   pageNum: 1,
   pageSize: 10,
-  name: undefined,
-  key: undefined,
+  flowName: undefined,
+  flowCode: undefined,
   categoryCode: undefined
 });
 const rules = {
