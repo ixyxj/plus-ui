@@ -42,8 +42,8 @@
         <el-table-column align="center" prop="createByName" label="申请人"></el-table-column>
         <el-table-column align="center" label="办理人">
           <template #default="scope">
-            <template v-if="scope.row.transactorNames">
-              <el-tag v-for="(name, index) in scope.row.transactorNames.split(',')" :key="index" type="success">
+            <template v-if="scope.row.assigneeNames">
+              <el-tag v-for="(name, index) in scope.row.assigneeNames.split(',')" :key="index" type="success">
                 {{ name }}
               </el-tag>
             </template>

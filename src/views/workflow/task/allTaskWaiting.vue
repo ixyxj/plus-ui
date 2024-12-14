@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-<!--    <div class="mb-[10px]">
+    <!--    <div class="mb-[10px]">
       <el-card shadow="hover" class="text-center">
         <el-radio-group v-model="tab" @change="changeTab(tab)">
           <el-radio-button value="waiting">待办任务</el-radio-button>
@@ -23,7 +23,7 @@
             <el-form-item label="流程定义名称" label-width="100" prop="flowName">
               <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
             </el-form-item>
-<!--            <el-form-item label="流程定义编码" label-width="100" prop="flowCode">
+            <!--            <el-form-item label="流程定义编码" label-width="100" prop="flowCode">
               <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义编码" @keyup.enter="handleQuery" />
             </el-form-item>-->
             <el-form-item>
@@ -59,8 +59,8 @@
           <el-table-column align="center" label="办理人">
             <template #default="scope">
               <template v-if="tab === 'waiting'">
-                <template v-if="scope.row.transactorNames">
-                  <el-tag v-for="(name, index) in scope.row.transactorNames.split(',')" :key="index" type="success">
+                <template v-if="scope.row.assigneeNames">
+                  <el-tag v-for="(name, index) in scope.row.assigneeNames.split(',')" :key="index" type="success">
                     {{ name }}
                   </el-tag>
                 </template>
