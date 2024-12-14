@@ -12,7 +12,10 @@
               <el-table-column prop="nodeName" label="任务名称" sortable align="center"></el-table-column>
               <el-table-column prop="approveName" :show-overflow-tooltip="true" label="办理人" sortable align="center">
                 <template #default="scope">
-                  <el-tag type="success">{{ scope.row.approveName || '无' }}</el-tag>
+                  <template v-if="scope.row.approveName">
+                    <el-tag v-for="(item, index) in scope.row.approveName.split(',')" :key="index" type="success">{{ item }}</el-tag>
+                  </template>
+                  <template v-else> <el-tag type="success">无</el-tag></template>
                 </template>
               </el-table-column>
               <el-table-column prop="flowStatus" label="状态" width="80" sortable align="center">
@@ -84,16 +87,16 @@ const init = async (businessKey: string | number) => {
       imgUrl.value = 'data:image/gif;base64,' + resp.data.image;
       if (historyList.value.length > 0) {
         historyList.value.forEach((item) => {
-          if(item.ext){
+          if (item.ext) {
             getIds(item.ext).then((res) => {
               item.attachmentList = res.data;
             });
-          }else{
+          } else {
             item.attachmentList = [];
           }
         });
       }
-      console.log(historyList.value,"2222222");
+      console.log(historyList.value, '2222222');
       loading.value = false;
     }
   });

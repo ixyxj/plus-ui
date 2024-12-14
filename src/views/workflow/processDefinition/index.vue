@@ -50,6 +50,9 @@
               <el-col :span="1.5">
                 <el-button type="primary" icon="UploadFilled" @click="uploadDialog.visible = true">部署流程文件</el-button>
               </el-col>
+              <el-col :span="1.5">
+                <el-button type="primary" icon="Download" :disabled="single" @click="handleExportDef">导出</el-button>
+              </el-col>
               <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
             </el-row>
           </template>
@@ -272,8 +275,7 @@ type CategoryOption = {
 
 const loading = ref(true);
 const ids = ref<Array<any>>([]);
-const deploymentIds = ref<Array<any>>([]);
-const keys = ref<Array<any>>([]);
+const flowCodeList = ref<Array<any>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const showSearch = ref(true);
@@ -374,8 +376,7 @@ const resetQuery = () => {
 // 多选框选中数据
 const handleSelectionChange = (selection: any) => {
   ids.value = selection.map((item: any) => item.id);
-  deploymentIds.value = selection.map((item: any) => item.deploymentId);
-  keys.value = selection.map((item: any) => item.key);
+  flowCodeList.value = selection.map((item: any) => item.flowCode);
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
@@ -410,7 +411,6 @@ const handleDelete = async (row?: FlowDefinitionVo) => {
 
 /** 发布流程定义 */
 const handlePublish = async (row?: FlowDefinitionVo) => {
-  const id = row?.id || ids.value;
   await proxy?.$modal.confirm(
     '是否确认发布流程定义KEY为【' + row.flowCode + '】版本为【' + row.version + '】的数据项？，发布后会将已发布流程定义改为失效！'
   );
@@ -525,5 +525,10 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
       }
     });
   });
+};
+//导出
+/** 导出按钮操作 */
+const handleExportDef = () => {
+  proxy?.download(`/workflow/definition/exportDef/${ids.value[0]}`, {}, `${flowCodeList.value[0]}.xml`);
 };
 </script>
