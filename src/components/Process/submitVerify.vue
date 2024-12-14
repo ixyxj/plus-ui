@@ -154,9 +154,7 @@ const task = ref<FlowTaskVO>({
   flowCode: undefined,
   flowStatus: undefined,
   nodeType: undefined,
-  nodeRatio: undefined,
-  wfNodeConfigVo: undefined,
-  wfDefinitionConfigVo: undefined
+  nodeRatio: undefined
 });
 const dialog = reactive<DialogOption>({
   visible: false,
