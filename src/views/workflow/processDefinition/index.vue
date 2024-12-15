@@ -71,7 +71,7 @@
                 <el-tag v-else-if="scope.row.activityStatus == 1" type="success">激活</el-tag>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="isPublish" label="发布状态" width="80">
+            <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
               <template #default="scope">
                 <el-tag v-if="scope.row.isPublish == 0" type="danger">未发布</el-tag>
                 <el-tag v-else-if="scope.row.isPublish == 1" type="success">已发布</el-tag>
@@ -86,10 +86,10 @@
                       link
                       type="primary"
                       size="small"
-                      :icon="!scope.row.activityStatus ? 'Lock' : 'Unlock'"
+                      :icon="scope.row.activityStatus == 0 ? 'Lock' : 'Unlock'"
                       @click="handleProcessDefState(scope.row)"
                     >
-                      {{ scope.row.activityStatus ? '挂起流程' : '激活流程' }}
+                      {{ scope.row.activityStatus == 0 ? '激活流程' : '挂起流程' }}
                     </el-button>
                   </el-col>
                   <el-col :span="1.5">
@@ -423,14 +423,14 @@ const handlePublish = async (row?: FlowDefinitionVo) => {
 /** 挂起/激活 */
 const handleProcessDefState = async (row: FlowDefinitionVo) => {
   let msg: string;
-  if (row.activityStatus) {
+  if (row.activityStatus == 1) {
     msg = `暂停后，此流程下的所有任务都不允许往后流转，您确定挂起【${row.flowName || row.flowCode}】吗？`;
   } else {
     msg = `启动后，此流程下的所有任务都允许往后流转，您确定激活【${row.flowName || row.flowCode}】吗？`;
   }
   await proxy?.$modal.confirm(msg);
   loading.value = true;
-  await active(row.id, row.activityStatus).finally(() => (loading.value = false));
+  await active(row.id, row.activityStatus == 0).finally(() => (loading.value = false));
   await getList();
   proxy?.$modal.msgSuccess('操作成功');
 };

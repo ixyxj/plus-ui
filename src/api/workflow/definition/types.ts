@@ -11,7 +11,7 @@ export interface FlowDefinitionVo {
   flowCode: string;
   version: string;
   isPublish: number;
-  activityStatus: boolean;
+  activityStatus: number;
   createTime: Date;
   updateTime: Date;
 }

@@ -16,7 +16,7 @@ export interface FlowInstanceVO extends BaseEntity {
   flowCode: string;
   version: string;
   businessId: string;
-  activityStatus?: any;
+  activityStatus: number;
   tenantId: string;
   createTime: string;
   createBy: string;

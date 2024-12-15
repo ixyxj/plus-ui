@@ -224,7 +224,7 @@ const handleCancelProcessApply = async (id: string) => {
   loading.value = true;
   let data = {
     businessId: id,
-    message: '撤销流程！'
+    message: '申请人撤销流程！'
   };
   await cancelProcessApply(data).finally(() => (loading.value = false));
   await getList();

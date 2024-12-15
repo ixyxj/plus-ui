@@ -232,7 +232,7 @@ const handleCancelProcessApply = async (businessId: string) => {
   if ('running' === tab.value) {
     let data = {
       businessId: businessId,
-      message: '撤销流程！'
+      message: '申请人撤销流程！'
     };
     await cancelProcessApply(data).finally(() => (loading.value = false));
     getList();

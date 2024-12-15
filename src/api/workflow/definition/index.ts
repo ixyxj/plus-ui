@@ -53,6 +53,7 @@ export const deleteDefinition = (id: string | string[]) => {
 /**
  * 挂起/激活
  * @param definitionId 流程定义id
+ * @param activityStatus 状态
  * @returns
  */
 export const active = (definitionId: string, activityStatus: boolean) => {
@@ -60,7 +61,7 @@ export const active = (definitionId: string, activityStatus: boolean) => {
     url: `/workflow/definition/active/${definitionId}`,
     method: 'put',
     params: {
-      activityStatus: activityStatus
+      active: activityStatus
     }
   });
 };
