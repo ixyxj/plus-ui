@@ -154,8 +154,6 @@ const getWaitingList = () => {
 //办理
 const handleOpen = async (row: FlowTaskVO) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
     type: 'approval'

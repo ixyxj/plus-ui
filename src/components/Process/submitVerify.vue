@@ -167,7 +167,7 @@ const form = ref<Record<string, any>>({
   message: undefined,
   variables: {},
   messageType: ['1'],
-  wfCopyList: []
+  flowCopyList: []
 });
 const backForm = ref<Record<string, any>>({
   taskId: undefined,
@@ -203,15 +203,15 @@ const handleCompleteTask = async () => {
   form.value.taskId = taskId.value;
   form.value.taskVariables = props.taskVariables;
   if (selectCopyUserList.value && selectCopyUserList.value.length > 0) {
-    let wfCopyList = [];
+    let flowCopyList = [];
     selectCopyUserList.value.forEach((e) => {
       let copyUser = {
         userId: e.userId,
         userName: e.nickName
       };
-      wfCopyList.push(copyUser);
+      flowCopyList.push(copyUser);
     });
-    form.value.wfCopyList = wfCopyList;
+    form.value.flowCopyList = flowCopyList;
   }
   await proxy?.$modal.confirm('是否确认提交？');
   loading.value = true;

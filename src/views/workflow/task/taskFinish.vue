@@ -152,8 +152,6 @@ const getFinishList = () => {
 /** 查看按钮操作 */
 const handleView = (row: FlowTaskVO) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
     type: 'view'
