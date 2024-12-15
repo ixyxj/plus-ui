@@ -103,6 +103,10 @@ const flowCodeOptions = [
   {
     value: 'leave3',
     label: '请假申请-并行网关'
+  },
+  {
+    value: 'leave4',
+    label: '请假申请-会签'
   }
 ];
 
@@ -241,7 +245,7 @@ const handleStartWorkFlow = async (data: LeaveVO) => {
     //流程变量
     taskVariables.value = {
       leaveDays: data.leaveDays,
-      userList: ['1', '3']
+      userList: ['1', '3', '4']
     };
     submitFormData.value.variables = taskVariables.value;
     const resp = await startWorkFlow(submitFormData.value);
