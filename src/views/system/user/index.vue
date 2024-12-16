@@ -583,8 +583,8 @@ function submitFileForm() {
 const initTreeData = async () => {
   // 判断部门的数据是否存在，存在不获取，不存在则获取
   if (deptOptions.value === undefined) {
-    const { data } = await treeselect();
-    deptOptions.value = data;
+    const row = await treeselect();
+    deptOptions.value = row.data;
   }
 };
 

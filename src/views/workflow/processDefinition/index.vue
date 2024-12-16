@@ -267,6 +267,7 @@ import { listDefinition, deleteDefinition, active, importDef,
 import { CategoryTreeVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { UploadRequestOptions } from 'element-plus';
+import {TreeOptionProps} from "element-plus/es/components/tree/src/tree.type";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -535,7 +536,7 @@ const handleSubmit = async () => {
 };
 //复制
 const handleCopyDef = async (row: FlowDefinitionVo) => {
-  ElMessageBox.confirm(`是否确认复制【${row.flowCode}】版本为${row.version}】的流程定义！`, '提示', {
+  ElMessageBox.confirm(`是否确认复制【${row.flowCode}】版本为【${row.version}】的流程定义！`, '提示', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning'
