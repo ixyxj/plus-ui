@@ -1,7 +1,7 @@
 export interface FlowDefinitionQuery extends PageQuery {
   flowCode?: string;
   flowName?: string;
-  category: string;
+  category: string | number;
   isPublish?: number;
 }
 

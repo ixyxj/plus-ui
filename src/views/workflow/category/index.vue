@@ -30,7 +30,7 @@
         ref="categoryTableRef"
         v-loading="loading"
         :data="categoryList"
-        row-key="id"
+        row-key="categoryId"
         :default-expand-all="isExpandAll"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
@@ -58,8 +58,8 @@
           <el-tree-select
             v-model="form.parentId"
             :data="categoryOptions"
-            :props="{ value: 'id', label: 'categoryName', children: 'children' }"
-            value-key="id"
+            :props="{ value: 'categoryId', label: 'categoryName', children: 'children' }"
+            value-key="categoryId"
             placeholder="请选择父级id"
             check-strictly
           />
@@ -67,8 +67,8 @@
         <el-form-item label="分类名称" prop="categoryName">
           <el-input v-model="form.categoryName" placeholder="请输入分类名称" />
         </el-form-item>
-        <el-form-item label="排序" prop="sortNum">
-          <el-input-number v-model="form.sortNum" placeholder="请输入排序" controls-position="right" :min="0" />
+        <el-form-item label="排序" prop="orderNum">
+          <el-input-number v-model="form.orderNum" placeholder="请输入排序" controls-position="right" :min="0" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -86,8 +86,9 @@ import { listCategory, getCategory, delCategory, addCategory, updateCategory } f
 import { CategoryVO, CategoryQuery, CategoryForm } from '@/api/workflow/category/types';
 
 type CategoryOption = {
-  id: number;
+  categoryId: string | number;
   categoryName: string;
+  parentId: string | number;
   children?: CategoryOption[];
 };
 
@@ -110,10 +111,11 @@ const dialog = reactive<DialogOption>({
 });
 
 const initFormData: CategoryForm = {
-  id: undefined,
+  categoryId: undefined,
   categoryName: undefined,
   parentId: undefined,
-  sortNum: 0
+  orderNum: 0,
+  status: 0
 };
 
 const data = reactive<PageData<CategoryForm, CategoryQuery>>({
@@ -136,7 +138,7 @@ const { queryParams, form, rules } = toRefs(data);
 const getList = async () => {
   loading.value = true;
   const res = await listCategory(queryParams.value);
-  const data = proxy?.handleTree<CategoryVO>(res.data, 'id', 'parentId');
+  const data = proxy?.handleTree<CategoryVO>(res.data, 'categoryId', 'parentId');
   if (data) {
     categoryList.value = data;
     loading.value = false;
@@ -147,9 +149,10 @@ const getList = async () => {
 const getTreeselect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
-  const data: CategoryOption = { id: 0, categoryName: '顶级节点', children: [] };
-  data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
+  const data: CategoryOption = { categoryId: 0, categoryName: '顶级节点', parentId: 0, children: [] };
+  data.children = proxy?.handleTree<CategoryOption>(res.data, 'categoryId', 'parentId');
   categoryOptions.value.push(data);
+  console.log(categoryOptions.value)
 };
 
 // 取消按钮
@@ -182,8 +185,8 @@ const handleAdd = (row?: CategoryVO) => {
   nextTick(() => {
     reset();
     getTreeselect();
-    if (row != null && row.id) {
-      form.value.parentId = row.id;
+    if (row != null && row.categoryId) {
+      form.value.parentId = row.categoryId;
     } else {
       form.value.parentId = 0;
     }
@@ -213,9 +216,9 @@ const handleUpdate = (row: CategoryVO) => {
     reset();
     await getTreeselect();
     if (row != null) {
-      form.value.parentId = row.id;
+      form.value.parentId = row.categoryId;
     }
-    const res = await getCategory(row.id);
+    const res = await getCategory(row.categoryId);
     loading.value = false;
     Object.assign(form.value, res.data);
   });
@@ -226,7 +229,7 @@ const submitForm = () => {
   categoryFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      if (form.value.id) {
+      if (form.value.categoryId) {
         await updateCategory(form.value).finally(() => (buttonLoading.value = false));
       } else {
         await addCategory(form.value).finally(() => (buttonLoading.value = false));
@@ -240,9 +243,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row: CategoryVO) => {
-  await proxy?.$modal.confirm('是否确认删除流程分类编号为"' + row.id + '"的数据项？');
+  await proxy?.$modal.confirm('是否确认删除流程分类编号为"' + row.categoryId + '"的数据项？');
   loading.value = true;
-  await delCategory(row.id).finally(() => (loading.value = false));
+  await delCategory(row.categoryId).finally(() => (loading.value = false));
   await getList();
   proxy?.$modal.msgSuccess('删除成功');
 };

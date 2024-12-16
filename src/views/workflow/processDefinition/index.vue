@@ -10,7 +10,7 @@
             class="mt-2"
             node-key="id"
             :data="categoryOptions"
-            :props="{ label: 'categoryName', children: 'children' }"
+            :props="{ value: 'id', label: 'label', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             highlight-current
@@ -62,7 +62,7 @@
 
           <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column align="center" prop="id" label="主键" v-if="true" ></el-table-column>
+            <el-table-column align="center" prop="id" label="主键" v-if="false" ></el-table-column>
             <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="flowCode" label="标识KEY" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="80">
@@ -146,7 +146,7 @@
           <el-tree-select
             v-model="selectCategory"
             :data="categoryOptions"
-            :props="{ value: 'id', label: 'categoryName', children: 'children' }"
+            :props="{ value: 'id', label: 'label', children: 'children' }"
             filterable
             value-key="id"
             :render-after-expand="false"
@@ -234,7 +234,7 @@
             <el-tree-select
               v-model="form.category"
               :data="categoryOptions"
-              :props="{ value: 'id', label: 'categoryName', children: 'children' }"
+              :props="{ value: 'id', label: 'label', children: 'children' }"
               filterable
               value-key="id"
               :render-after-expand="false"
@@ -262,9 +262,9 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, edit, getInfo, copy } from '@/api/workflow/definition';
-import { listCategory } from '@/api/workflow/category';
-import { CategoryVO } from '@/api/workflow/category/types';
+import { listDefinition, deleteDefinition, active, importDef,
+  getHisListByKey, publish, add, edit, getInfo, copy, categoryTree } from '@/api/workflow/definition';
+import { CategoryTreeVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { UploadRequestOptions } from 'element-plus';
 
@@ -272,12 +272,6 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const queryFormRef = ref<ElFormInstance>();
 const categoryTreeRef = ref<ElTreeInstance>();
-
-type CategoryOption = {
-  id: string;
-  categoryName: string;
-  children?: CategoryOption[];
-};
 
 const loading = ref(true);
 const ids = ref<Array<any>>([]);
@@ -289,7 +283,7 @@ const total = ref(0);
 const uploadDialogLoading = ref(false);
 const processDefinitionList = ref<FlowDefinitionVo[]>([]);
 const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
-const categoryOptions = ref<CategoryOption[]>([]);
+const categoryOptions = ref<CategoryTreeVO[]>([]);
 const categoryName = ref('');
 /** 部署文件分类选择 */
 const selectCategory = ref();
@@ -344,7 +338,7 @@ onMounted(() => {
 });
 
 /** 节点单击事件 */
-const handleNodeClick = (data: CategoryVO) => {
+const handleNodeClick = (data: CategoryTreeVO) => {
   queryParams.value.category = data.id;
   if (data.id === '0') {
     queryParams.value.category = '';
@@ -368,10 +362,10 @@ watchEffect(
 
 /** 查询流程分类下拉树结构 */
 const getTreeselect = async () => {
-  const res = await listCategory();
+  const res = await categoryTree();
   categoryOptions.value = [];
-  const data: CategoryOption = { id: '0', categoryName: '顶级节点', children: [] };
-  data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
+  const data: CategoryTreeVO = { id: '0', parentId: '0', label: '顶级节点', weight: 0, children: [] };
+  data.children = res.data
   categoryOptions.value.push(data);
 };
 
