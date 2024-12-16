@@ -146,7 +146,7 @@ const getList = async () => {
 };
 
 /** 查询流程分类下拉树结构 */
-const getTreeselect = async () => {
+const getTreeSelect = async () => {
   const res = await listCategory();
   categoryOptions.value = [];
   const data: CategoryOption = { categoryId: 0, categoryName: '顶级节点', parentId: 0, children: [] };
@@ -184,7 +184,7 @@ const handleAdd = (row?: CategoryVO) => {
   dialog.title = '添加流程分类';
   nextTick(() => {
     reset();
-    getTreeselect();
+    getTreeSelect();
     if (row != null && row.categoryId) {
       form.value.parentId = row.categoryId;
     } else {
@@ -214,7 +214,7 @@ const handleUpdate = (row: CategoryVO) => {
   dialog.title = '修改流程分类';
   nextTick(async () => {
     reset();
-    await getTreeselect();
+    await getTreeSelect();
     if (row != null) {
       form.value.parentId = row.categoryId;
     }
