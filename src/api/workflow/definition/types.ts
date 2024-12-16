@@ -9,6 +9,7 @@ export interface FlowDefinitionVo {
   id: string;
   flowName: string;
   flowCode: string;
+  formPath: string;
   version: string;
   isPublish: number;
   activityStatus: number;
@@ -17,9 +18,11 @@ export interface FlowDefinitionVo {
 }
 
 export interface FlowDefinitionForm {
+  id: string;
   flowName: string;
   flowCode: string;
   category: string;
+  formPath: string;
 }
 
 export interface definitionXmlVO {

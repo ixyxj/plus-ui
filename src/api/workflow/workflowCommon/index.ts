@@ -5,7 +5,7 @@ export default {
     proxy.$tab.closePage(proxy.$route);
     console.log(routerJumpVo);
     proxy.$router.push({
-      path: `/workflow/leaveEdit/index`,
+      path: routerJumpVo.formPath,
       query: {
         id: routerJumpVo.businessKey,
         type: routerJumpVo.type,

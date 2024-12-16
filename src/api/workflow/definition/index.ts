@@ -131,6 +131,31 @@ export const add = (data: FlowDefinitionForm) => {
 };
 
 /**
+ * 修改
+ * @param data 参数
+ * @returns
+ */
+export const edit = (data: FlowDefinitionForm) => {
+  return request({
+    url: `/workflow/definition`,
+    method: 'put',
+    data: data
+  });
+};
+
+/**
+ * 查询详情
+ * @param id 参数
+ * @returns
+ */
+export const getInfo = (id: number | string) => {
+  return request({
+    url: `/workflow/definition/${id}`,
+    method: 'get'
+  });
+};
+
+/**
  * 复制流程定义
  * @param id 流程定义id
  * @returns

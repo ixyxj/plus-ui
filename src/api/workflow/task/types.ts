@@ -24,6 +24,8 @@ export interface FlowTaskVO {
   nodeName: string;
   flowCode: string;
   flowStatus: string;
+  formCustom: string;
+  formPath: string;
   nodeType: number;
   nodeRatio: string | number;
   version?: string;

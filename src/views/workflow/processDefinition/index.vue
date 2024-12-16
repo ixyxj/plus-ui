@@ -45,13 +45,16 @@
                 <el-button type="primary" icon="Plus" @click="handleAdd()">添加</el-button>
               </el-col>
               <el-col :span="1.5">
+                <el-button type="success" icon="Edit" :disabled="single" @click="handleUpdate()">修改</el-button>
+              </el-col>
+              <el-col :span="1.5">
                 <el-button type="danger" icon="Delete" :disabled="multiple" @click="handleDelete()">删除</el-button>
               </el-col>
               <el-col :span="1.5">
                 <el-button type="primary" icon="UploadFilled" @click="uploadDialog.visible = true">部署流程文件</el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button type="primary" icon="Download" :disabled="single" @click="handleExportDef">导出</el-button>
+                <el-button type="warning" icon="Download" :disabled="single" @click="handleExportDef">导出</el-button>
               </el-col>
               <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
             </el-row>
@@ -59,7 +62,7 @@
 
           <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
+            <el-table-column align="center" prop="id" label="主键" v-if="true" ></el-table-column>
             <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="flowCode" label="标识KEY" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="80">
@@ -223,7 +226,7 @@
       </el-table>
     </el-dialog>
 
-    <!-- 新增流程定义 -->
+    <!-- 新增/编辑流程定义 -->
     <el-dialog v-model="modelDialog.visible" :title="modelDialog.title" width="650px" append-to-body :close-on-click-modal="false">
       <template #footer>
         <el-form ref="defFormRef" :model="form" :rules="rules" label-width="110px">
@@ -245,10 +248,13 @@
           <el-form-item label="流程名称" prop="flowName">
             <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit />
           </el-form-item>
+          <el-form-item label="表单路径" prop="flowName">
+            <el-input v-model="form.formPath" placeholder="请输入表单路径" maxlength="100" show-word-limit />
+          </el-form-item>
         </el-form>
         <div class="dialog-footer">
           <el-button @click="modelDialog.visible = false">取消</el-button>
-          <el-button type="primary" @click="handleAddSubmit">保存</el-button>
+          <el-button type="primary" @click="handleSubmit">保存</el-button>
         </div>
       </template>
     </el-dialog>
@@ -256,7 +262,7 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, copy } from '@/api/workflow/definition';
+import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, edit, getInfo, copy } from '@/api/workflow/definition';
 import { listCategory } from '@/api/workflow/category';
 import { CategoryVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
@@ -281,7 +287,7 @@ const multiple = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
 const uploadDialogLoading = ref(false);
-const processDefinitionList = ref<FlowDefinitionQuery[]>([]);
+const processDefinitionList = ref<FlowDefinitionVo[]>([]);
 const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
 const categoryOptions = ref<CategoryOption[]>([]);
 const categoryName = ref('');
@@ -301,7 +307,7 @@ const processDefinitionDialog = reactive<DialogOption>({
 
 const modelDialog = reactive<DialogOption>({
   visible: false,
-  title: '新增流程'
+  title: ''
 });
 
 // 查询参数
@@ -317,11 +323,20 @@ const rules = {
   flowName: [{ required: true, message: '流程定义名称不能为空', trigger: 'blur' }],
   flowCode: [{ required: true, message: '流程定义编码不能为空', trigger: 'blur' }]
 };
-//新增流程定义参数
-const form = ref<FlowDefinitionForm>({
+const initFormData: FlowDefinitionForm = {
+  id: '',
   flowName: '',
   flowCode: '',
-  category: ''
+  category: '',
+  formPath: ''
+};
+//流程定义参数
+const form = ref<FlowDefinitionForm>({
+  id: '',
+  flowName: '',
+  flowCode: '',
+  category: '',
+  formPath: ''
 });
 onMounted(() => {
   getList();
@@ -402,7 +417,8 @@ const getProcessDefinitionHitoryList = async (id: string, key: string) => {
 /** 删除按钮操作 */
 const handleDelete = async (row?: FlowDefinitionVo) => {
   const id = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除流程定义KEY为【' + row.flowCode + '】的数据项？');
+  const defList = processDefinitionList.value.filter((x) => id.indexOf(x.id) != -1).map((x) => x.flowCode)
+  await proxy?.$modal.confirm('是否确认删除流程定义KEY为【' + defList + '】的数据项？');
   loading.value = true;
   await deleteDefinition(id).finally(() => (loading.value = false));
   await getList();
@@ -490,24 +506,36 @@ const designView = async (row: FlowDefinitionVo) => {
     }
   });
 };
+/** 表单重置 */
+const reset = () => {
+  form.value = { ...initFormData };
+  defFormRef.value?.resetFields();
+};
 /**
  * 新增
  */
 const handleAdd = async () => {
-  defFormRef.value?.resetFields();
+  reset();
   modelDialog.visible = true;
+  modelDialog.title = '新增流程';
 };
-//保存
-const handleAddSubmit = async () => {
+/** 修改按钮操作 */
+const handleUpdate = async (row?: FlowDefinitionVo) => {
+  reset();
+  const id = row?.id || ids.value[0];
+  const res = await getInfo(id);
+  Object.assign(form.value, res.data);
+  modelDialog.visible = true;
+  modelDialog.title = '修改流程';
+};
+
+const handleSubmit = async () => {
   defFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      add(form.value).then((resp) => {
-        if (resp.code === 200) {
-          proxy?.$modal.msgSuccess('操作成功');
-          modelDialog.visible = false;
-          getList();
-        }
-      });
+      form.value.id ? await edit(form.value) : await add(form.value);
+      proxy?.$modal.msgSuccess('操作成功');
+      modelDialog.visible = false;
+      getList();
     }
   });
 };
@@ -526,7 +554,7 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
     });
   });
 };
-//导出
+
 /** 导出按钮操作 */
 const handleExportDef = () => {
   proxy?.download(`/workflow/definition/exportDef/${ids.value[0]}`, {}, `${flowCodeList.value[0]}.xml`);
