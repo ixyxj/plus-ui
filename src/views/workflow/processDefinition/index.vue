@@ -10,7 +10,7 @@
             class="mt-2"
             node-key="id"
             :data="categoryOptions"
-            :props="{ value: 'id', label: 'label', children: 'children' }"
+            :props="{ label: 'label', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             highlight-current
@@ -364,10 +364,7 @@ watchEffect(
 /** 查询流程分类下拉树结构 */
 const getTreeselect = async () => {
   const res = await categoryTree();
-  categoryOptions.value = [];
-  const data: CategoryTreeVO = { id: '0', parentId: '0', label: '顶级节点', weight: 0, children: [] };
-  data.children = res.data
-  categoryOptions.value.push(data);
+  categoryOptions.value = res.data;
 };
 
 /** 搜索按钮操作 */
