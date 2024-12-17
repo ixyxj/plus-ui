@@ -1,3 +1,10 @@
+export interface CategoryTreeVO {
+  id: number | string;
+  label: string;
+  parentId: number | string;
+  weight: number;
+  children: CategoryTreeVO[];
+}
 export interface CategoryVO {
 
   /**
