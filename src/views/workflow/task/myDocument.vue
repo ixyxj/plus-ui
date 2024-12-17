@@ -245,7 +245,9 @@ const handleOpen = async (row, type) => {
   const routerJumpVo = reactive<RouterJumpVo>({
     businessKey: row.businessId,
     taskId: row.id,
-    type: type
+    type: type,
+    formCustom: row.formCustom,
+    formPath: row.formPath
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
 };

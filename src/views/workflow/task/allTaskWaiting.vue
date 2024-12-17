@@ -231,11 +231,11 @@ const submitCallback = async (data) => {
 /** 查看按钮操作 */
 const handleView = (row) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    wfDefinitionConfigVo: row.wfDefinitionConfigVo,
-    wfNodeConfigVo: row.wfNodeConfigVo,
     businessKey: row.businessId,
     taskId: row.id,
-    type: 'view'
+    type: 'view',
+    formCustom: row.formCustom,
+    formPath: row.formPath
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
 };

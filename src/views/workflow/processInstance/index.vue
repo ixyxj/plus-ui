@@ -371,7 +371,9 @@ const handleView = (row) => {
   const routerJumpVo = reactive<RouterJumpVo>({
     businessKey: row.businessId,
     taskId: row.id,
-    type: 'view'
+    type: 'view',
+    formCustom: row.formCustom,
+    formPath: row.formPath
   });
   workflowCommon.routerJump(routerJumpVo, proxy);
 };
