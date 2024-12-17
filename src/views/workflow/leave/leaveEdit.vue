@@ -128,7 +128,7 @@ const approvalRecordRef = ref<InstanceType<typeof ApprovalRecord>>();
 const leaveFormRef = ref<ElFormInstance>();
 
 const submitFormData = ref<StartProcessBo>({
-  businessKey: '',
+  businessId: '',
   flowCode: '',
   variables: {}
 });
@@ -245,7 +245,7 @@ const submitFlow = async () => {
 const handleStartWorkFlow = async (data: LeaveVO) => {
   try {
     submitFormData.value.flowCode = flowCode.value;
-    submitFormData.value.businessKey = data.id;
+    submitFormData.value.businessId = data.id;
     //流程变量
     taskVariables.value = {
       leaveDays: data.leaveDays,

@@ -7,7 +7,7 @@ export default {
     proxy.$router.push({
       path: routerJumpVo.formPath,
       query: {
-        id: routerJumpVo.businessKey,
+        id: routerJumpVo.businessId,
         type: routerJumpVo.type,
         taskId: routerJumpVo.taskId
       }

@@ -120,7 +120,7 @@ const getTaskCopyList = () => {
 /** 查看按钮操作 */
 const handleView = (row) => {
   const routerJumpVo = reactive<RouterJumpVo>({
-    businessKey: row.businessId,
+    businessId: row.businessId,
     taskId: row.id,
     type: 'view',
     formCustom: row.formCustom,

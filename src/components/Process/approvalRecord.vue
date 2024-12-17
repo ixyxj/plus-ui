@@ -76,12 +76,12 @@ const tabActiveName = ref('bpmn');
 const imgUrl = ref('');
 
 //初始化查询审批记录
-const init = async (businessKey: string | number) => {
+const init = async (businessId: string | number) => {
   visible.value = true;
   loading.value = true;
   tabActiveName.value = 'bpmn';
   historyList.value = [];
-  flowImage(businessKey).then((resp) => {
+  flowImage(businessId).then((resp) => {
     if (resp.data) {
       historyList.value = resp.data.list;
       imgUrl.value = 'data:image/gif;base64,' + resp.data.image;

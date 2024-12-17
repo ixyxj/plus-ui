@@ -31,9 +31,9 @@ export const pageByFinish = (query: FlowInstanceQuery): AxiosPromise<FlowInstanc
 /**
  * 通过业务id获取历史流程图
  */
-export const flowImage = (businessKey: string | number) => {
+export const flowImage = (businessId: string | number) => {
   return request({
-    url: `/workflow/instance/flowImage/${businessKey}` + '?t' + Math.random(),
+    url: `/workflow/instance/flowImage/${businessId}` + '?t' + Math.random(),
     method: 'get'
   });
 };

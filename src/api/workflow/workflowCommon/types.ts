@@ -1,5 +1,5 @@
 export interface RouterJumpVo {
-  businessKey: string;
+  businessId: string;
   taskId: string | number;
   type: string;
   formCustom: string;
@@ -7,7 +7,7 @@ export interface RouterJumpVo {
 }
 
 export interface StartProcessBo {
-  businessKey: string | number;
+  businessId: string | number;
   flowCode: string;
   variables: any;
 }
