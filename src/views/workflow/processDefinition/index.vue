@@ -62,7 +62,7 @@
 
           <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column align="center" prop="id" label="主键" v-if="false" ></el-table-column>
+            <el-table-column align="center" prop="id" label="主键" v-if="false"></el-table-column>
             <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="flowCode" label="标识KEY" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="version" label="版本号" width="80">
@@ -262,12 +262,11 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import { listDefinition, deleteDefinition, active, importDef,
-  getHisListByKey, publish, add, edit, getInfo, copy, categoryTree } from '@/api/workflow/definition';
+import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, edit, getInfo, copy } from '@/api/workflow/definition';
+import { categoryTree } from '@/api/workflow/category';
 import { CategoryTreeVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
 import { UploadRequestOptions } from 'element-plus';
-import {TreeOptionProps} from "element-plus/es/components/tree/src/tree.type";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -409,7 +408,7 @@ const getProcessDefinitionHitoryList = async (id: string, key: string) => {
 /** 删除按钮操作 */
 const handleDelete = async (row?: FlowDefinitionVo) => {
   const id = row?.id || ids.value;
-  const defList = processDefinitionList.value.filter((x) => id.indexOf(x.id) != -1).map((x) => x.flowCode)
+  const defList = processDefinitionList.value.filter((x) => id.indexOf(x.id) != -1).map((x) => x.flowCode);
   await proxy?.$modal.confirm('是否确认删除流程定义KEY为【' + defList + '】的数据项？');
   loading.value = true;
   await deleteDefinition(id).finally(() => (loading.value = false));

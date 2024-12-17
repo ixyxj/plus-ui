@@ -1,13 +1,5 @@
 <template>
   <div class="p-2">
-    <!--    <div class="mb-[10px]">
-      <el-card shadow="hover" class="text-center">
-        <el-radio-group v-model="tab" @change="changeTab(tab)">
-          <el-radio-button value="waiting">待办任务</el-radio-button>
-          <el-radio-button value="finish">已办任务</el-radio-button>
-        </el-radio-group>
-      </el-card>
-    </div>-->
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -23,9 +15,6 @@
             <el-form-item label="流程定义名称" label-width="100" prop="flowName">
               <el-input v-model="queryParams.flowName" placeholder="请输入流程定义名称" @keyup.enter="handleQuery" />
             </el-form-item>
-            <!--            <el-form-item label="流程定义编码" label-width="100" prop="flowCode">
-              <el-input v-model="queryParams.flowCode" placeholder="请输入流程定义编码" @keyup.enter="handleQuery" />
-            </el-form-item>-->
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -37,7 +26,7 @@
     <el-card shadow="hover">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
+          <el-col :span="1.5" v-if="tab === 'waiting'">
             <el-button type="primary" plain icon="Edit" :disabled="multiple" @click="handleUpdate">修改办理人 </el-button>
           </el-col>
           <right-toolbar v-model:show-search="showSearch" @query-table="handleQuery"></right-toolbar>

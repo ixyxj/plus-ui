@@ -1,12 +1,6 @@
 import request from '@/utils/request';
-import {
-  FlowDefinitionQuery,
-  definitionXmlVO,
-  FlowDefinitionForm,
-  FlowDefinitionVo
-} from '@/api/workflow/definition/types';
+import { FlowDefinitionQuery, definitionXmlVO, FlowDefinitionForm, FlowDefinitionVo } from '@/api/workflow/definition/types';
 import { AxiosPromise } from 'axios';
-import {CategoryForm, CategoryTreeVO} from "@/api/workflow/category/types";
 
 /**
  * 获取流程定义列表
@@ -16,19 +10,6 @@ import {CategoryForm, CategoryTreeVO} from "@/api/workflow/category/types";
 export const listDefinition = (query: FlowDefinitionQuery): AxiosPromise<FlowDefinitionVo[]> => {
   return request({
     url: `/workflow/definition/list`,
-    method: 'get',
-    params: query
-  });
-};
-
-/**
- * 获取流程分类树列表
- * @param query 流程实例id
- * @returns
- */
-export const categoryTree = (query?: CategoryForm): AxiosPromise<CategoryTreeVO[]> => {
-  return request({
-    url: `/workflow/definition/categoryTree`,
     method: 'get',
     params: query
   });

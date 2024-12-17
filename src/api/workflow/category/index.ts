@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { AxiosPromise } from 'axios';
-import { CategoryVO, CategoryForm, CategoryQuery } from '@/api/workflow/category/types';
+import { CategoryVO, CategoryForm, CategoryQuery, CategoryTreeVO } from '@/api/workflow/category/types';
 
 /**
  * 查询流程分类列表
@@ -59,5 +59,18 @@ export const delCategory = (categoryId: string | number | Array<string | number>
   return request({
     url: '/workflow/category/' + categoryId,
     method: 'delete'
+  });
+};
+
+/**
+ * 获取流程分类树列表
+ * @param query 流程实例id
+ * @returns
+ */
+export const categoryTree = (query?: CategoryForm): AxiosPromise<CategoryTreeVO[]> => {
+  return request({
+    url: `/workflow/category/categoryTree`,
+    method: 'get',
+    params: query
   });
 };

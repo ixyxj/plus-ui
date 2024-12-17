@@ -1,7 +1,7 @@
 import { FlowTaskVO } from '@/api/workflow/task/types';
 
 export interface FlowInstanceQuery extends PageQuery {
-  category?: string;
+  category?: string | number;
   nodeName?: string;
   flowCode?: string;
   flowName?: string;

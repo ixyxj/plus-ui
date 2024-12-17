@@ -10,7 +10,7 @@
             class="mt-2"
             node-key="id"
             :data="categoryOptions"
-            :props="{ label: 'categoryName', children: 'children' }"
+            :props="{ label: 'label', children: 'children' }"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             highlight-current
@@ -176,8 +176,8 @@
 
 <script lang="ts" setup>
 import { pageByRunning, pageByFinish, deleteByInstanceIds, instanceVariable, invalid } from '@/api/workflow/instance';
-import { listCategory } from '@/api/workflow/category';
-import { CategoryVO } from '@/api/workflow/category/types';
+import { categoryTree } from '@/api/workflow/category';
+import { CategoryTreeVO } from '@/api/workflow/category/types';
 import { FlowInstanceQuery, FlowInstanceVO } from '@/api/workflow/instance/types';
 import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
@@ -251,7 +251,7 @@ const queryParams = ref<FlowInstanceQuery>({
 });
 
 /** 节点单击事件 */
-const handleNodeClick = (data: CategoryVO) => {
+const handleNodeClick = (data: CategoryTreeVO) => {
   queryParams.value.category = data.id;
   if (data.id === '0') {
     queryParams.value.category = '';
@@ -275,11 +275,8 @@ watchEffect(
 
 /** 查询流程分类下拉树结构 */
 const getTreeselect = async () => {
-  const res = await listCategory();
-  categoryOptions.value = [];
-  const data: CategoryOption = { id: '0', categoryName: '顶级节点', children: [] };
-  data.children = proxy?.handleTree<CategoryOption>(res.data, 'id', 'parentId');
-  categoryOptions.value.push(data);
+  const res = await categoryTree();
+  categoryOptions.value = res.data;
 };
 
 /** 搜索按钮操作 */
