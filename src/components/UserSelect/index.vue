@@ -43,7 +43,7 @@
           <el-card shadow="hover">
             <template v-if="prop.multiple" #header>
               <el-tag v-for="user in selectUserList" :key="user.userId" closable style="margin: 2px" @close="handleCloseTag(user)">
-                {{ user.userName }}
+                {{ user.nickName }}
               </el-tag>
             </template>
 

@@ -14,7 +14,7 @@
       <el-form-item label="抄送">
         <el-button type="primary" icon="Plus" circle @click="openUserSelectCopy" />
         <el-tag v-for="user in selectCopyUserList" :key="user.userId" closable style="margin: 2px" @close="handleCopyCloseTag(user)">
-          {{ user.userName }}
+          {{ user.nickName }}
         </el-tag>
       </el-form-item>
       <el-form-item v-if="task.flowStatus === 'waiting'" label="审批意见">
@@ -153,6 +153,8 @@ const task = ref<FlowTaskVO>({
   nodeName: undefined,
   flowCode: undefined,
   flowStatus: undefined,
+  formCustom: undefined,
+  formPath: undefined,
   nodeType: undefined,
   nodeRatio: undefined
 });
