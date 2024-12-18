@@ -100,14 +100,14 @@
 <script setup lang="ts">
 import api from '@/api/system/user';
 import { UserQuery, UserVO } from '@/api/system/user/types';
-import { DeptVO } from '@/api/system/dept/types';
+import { DeptTreeVO, DeptVO } from '@/api/system/dept/types';
 import { VxeTableInstance } from 'vxe-table';
 import useDialog from '@/hooks/useDialog';
 
 interface PropType {
   modelValue?: UserVO[] | UserVO | undefined;
   multiple?: boolean;
-  data?: string | number | (string | number)[];
+  data?: string | number | (string | number)[] | undefined;
 }
 const prop = withDefaults(defineProps<PropType>(), {
   multiple: true,
@@ -125,7 +125,7 @@ const showSearch = ref(true);
 const total = ref(0);
 const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const deptName = ref('');
-const deptOptions = ref<DeptVO[]>([]);
+const deptOptions = ref<DeptTreeVO[]>([]);
 const selectUserList = ref<UserVO[]>([]);
 
 const deptTreeRef = ref<ElTreeInstance>();

@@ -96,7 +96,6 @@ const init = async (businessId: string | number) => {
           }
         });
       }
-      console.log(historyList.value, '2222222');
       loading.value = false;
     }
   });
