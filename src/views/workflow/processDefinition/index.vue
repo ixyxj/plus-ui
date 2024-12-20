@@ -68,7 +68,7 @@
             <el-table-column align="center" prop="version" label="版本号" width="80">
               <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>
-            <el-table-column align="center" prop="activityStatus" label="状态" width="130">
+            <el-table-column align="center" prop="activityStatus" label="激活状态" width="130">
               <template #default="scope">
                 <el-switch
                   v-model="scope.row.activityStatus"
@@ -172,7 +172,7 @@
         <el-table-column align="center" prop="version" label="版本号" width="90">
           <template #default="scope"> v{{ scope.row.version }}.0</template>
         </el-table-column>
-        <el-table-column align="center" prop="activityStatus" label="状态" width="130">
+        <el-table-column align="center" prop="activityStatus" label="激活状态" width="130">
           <template #default="scope">
             <el-switch
               v-model="scope.row.activityStatus"
@@ -182,7 +182,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="isPublish" label="状态" width="100">
+        <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
           <template #default="scope">
             <el-tag v-if="scope.row.isPublish == 0" type="danger">未发布</el-tag>
             <el-tag v-else-if="scope.row.isPublish == 1" type="success">已发布</el-tag>
