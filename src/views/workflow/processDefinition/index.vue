@@ -68,10 +68,14 @@
             <el-table-column align="center" prop="version" label="版本号" width="80">
               <template #default="scope"> v{{ scope.row.version }}.0</template>
             </el-table-column>
-            <el-table-column align="center" prop="isPublish" label="状态" width="130">
+            <el-table-column align="center" prop="activityStatus" label="状态" width="130">
               <template #default="scope">
-                <el-tag v-if="scope.row.activityStatus == 0" type="danger">挂起</el-tag>
-                <el-tag v-else-if="scope.row.activityStatus == 1" type="success">激活</el-tag>
+                <el-switch
+                  v-model="scope.row.activityStatus"
+                  :active-value="1"
+                  :inactive-value="0"
+                  @change="(status) => handleProcessDefState(scope.row, status)"
+                />
               </template>
             </el-table-column>
             <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
@@ -84,17 +88,6 @@
             <el-table-column fixed="right" label="操作" align="center" width="245" class-name="small-padding fixed-width">
               <template #default="scope">
                 <el-row :gutter="10" class="mb8">
-                  <el-col :span="1.5">
-                    <el-button
-                      link
-                      type="primary"
-                      size="small"
-                      :icon="scope.row.activityStatus == 0 ? 'Lock' : 'Unlock'"
-                      @click="handleProcessDefState(scope.row)"
-                    >
-                      {{ scope.row.activityStatus == 0 ? '激活流程' : '挂起流程' }}
-                    </el-button>
-                  </el-col>
                   <el-col :span="1.5">
                     <el-button
                       link
@@ -179,10 +172,14 @@
         <el-table-column align="center" prop="version" label="版本号" width="90">
           <template #default="scope"> v{{ scope.row.version }}.0</template>
         </el-table-column>
-        <el-table-column align="center" prop="isPublish" label="挂起/激活" width="100">
+        <el-table-column align="center" prop="activityStatus" label="状态" width="130">
           <template #default="scope">
-            <el-tag v-if="scope.row.activityStatus == 0" type="danger">挂起</el-tag>
-            <el-tag v-else-if="scope.row.activityStatus == 1" type="success">激活</el-tag>
+            <el-switch
+              v-model="scope.row.activityStatus"
+              :active-value="1"
+              :inactive-value="0"
+              @change="(status) => handleProcessDefState(scope.row, status)"
+            />
           </template>
         </el-table-column>
         <el-table-column align="center" prop="isPublish" label="状态" width="100">
@@ -195,17 +192,6 @@
         <el-table-column label="操作" align="center" width="245" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
-              <el-col :span="1.5">
-                <el-button
-                  link
-                  type="primary"
-                  size="small"
-                  :icon="!scope.row.activityStatus ? 'Lock' : 'Unlock'"
-                  @click="handleProcessDefState(scope.row)"
-                >
-                  {{ scope.row.activityStatus ? '挂起流程' : '激活流程' }}
-                </el-button>
-              </el-col>
               <el-col :span="1.5">
                 <el-button link type="primary" icon="Delete" size="small" @click="handleDelete(scope.row)">删除流程</el-button>
               </el-col>
@@ -428,18 +414,25 @@ const handlePublish = async (row?: FlowDefinitionVo) => {
   proxy?.$modal.msgSuccess('发布成功');
 };
 /** 挂起/激活 */
-const handleProcessDefState = async (row: FlowDefinitionVo) => {
+const handleProcessDefState = async (row: FlowDefinitionVo, status: number | string | boolean) => {
   let msg: string;
-  if (row.activityStatus == 1) {
+  if (status === 0) {
     msg = `暂停后，此流程下的所有任务都不允许往后流转，您确定挂起【${row.flowName || row.flowCode}】吗？`;
   } else {
     msg = `启动后，此流程下的所有任务都允许往后流转，您确定激活【${row.flowName || row.flowCode}】吗？`;
   }
-  await proxy?.$modal.confirm(msg);
-  loading.value = true;
-  await active(row.id, row.activityStatus == 0).finally(() => (loading.value = false));
-  await getList();
-  proxy?.$modal.msgSuccess('操作成功');
+  try {
+    loading.value = true;
+    await proxy?.$modal.confirm(msg);
+    await active(row.id, !!status);
+    await getList();
+    proxy?.$modal.msgSuccess('操作成功');
+  } catch (error) {
+    row.activityStatus = status === 0 ? 1 : 0;
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 //上传文件前的钩子
