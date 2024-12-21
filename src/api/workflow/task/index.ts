@@ -148,9 +148,9 @@ export const terminationTask = (data: any) => {
  * 获取可驳回得任务节点
  * @returns
  */
-export const getBackTaskNode = (processInstanceId: string) => {
+export const getBackTaskNode = (definitionId: string, nodeCode: string) => {
   return request({
-    url: `/workflow/task/getBackTaskNode/${processInstanceId}`,
+    url: `/workflow/task/getBackTaskNode/${definitionId}/${nodeCode}`,
     method: 'get'
   });
 };

@@ -236,7 +236,7 @@ const handleBackProcessOpen = async () => {
   backVisible.value = true;
   backLoading.value = true;
   backButtonDisabled.value = true;
-  let data = await getBackTaskNode(task.value.instanceId);
+  let data = await getBackTaskNode(task.value.definitionId, task.value.nodeCode);
   taskNodeList.value = data.data;
   backLoading.value = false;
   backButtonDisabled.value = false;
