@@ -68,7 +68,7 @@
                 </el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button v-has-permi="['system:user:delete']" type="danger" plain :disabled="multiple" icon="Delete" @click="handleDelete()">
+                <el-button v-has-permi="['system:user:remove']" type="danger" plain :disabled="multiple" icon="Delete" @click="handleDelete()">
                   删除
                 </el-button>
               </el-col>
@@ -81,8 +81,8 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item icon="Download" @click="importTemplate">下载模板</el-dropdown-item>
-                      <el-dropdown-item icon="Top" @click="handleImport">导入数据</el-dropdown-item>
-                      <el-dropdown-item icon="Download" @click="handleExport"> 导出数据</el-dropdown-item>
+                      <el-dropdown-item v-has-permi="['system:user:import']" icon="Top" @click="handleImport">导入数据</el-dropdown-item>
+                      <el-dropdown-item v-has-permi="['system:user:export']" icon="Download" @click="handleExport">导出数据</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -579,15 +579,6 @@ function submitFileForm() {
   uploadRef.value?.submit();
 }
 
-/** 初始化部门数据 */
-const initTreeData = async () => {
-  // 判断部门的数据是否存在，存在不获取，不存在则获取
-  if (deptOptions.value === undefined) {
-    const row = await treeselect();
-    deptOptions.value = row.data;
-  }
-};
-
 /** 重置操作表单 */
 const reset = () => {
   form.value = { ...initFormData };
@@ -605,7 +596,6 @@ const handleAdd = async () => {
   const { data } = await api.getUser();
   dialog.visible = true;
   dialog.title = '新增用户';
-  await initTreeData();
   postOptions.value = data.posts;
   roleOptions.value = data.roles;
   form.value.password = initPassword.value.toString();
@@ -618,7 +608,6 @@ const handleUpdate = async (row?: UserForm) => {
   const { data } = await api.getUser(userId);
   dialog.visible = true;
   dialog.title = '修改用户';
-  await initTreeData();
   Object.assign(form.value, data.user);
   postOptions.value = data.posts;
   roleOptions.value = data.roles;
