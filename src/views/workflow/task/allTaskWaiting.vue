@@ -112,6 +112,7 @@ import workflowCommon from '@/api/workflow/workflowCommon';
 import { RouterJumpVo } from '@/api/workflow/workflowCommon/types';
 import processMeddle from '@/components/Process/processMeddle';
 import { UserVO } from '@/api/system/user/types';
+import { TabsPaneContext } from 'element-plus';
 //选人组件
 const userSelectRef = ref<InstanceType<typeof UserSelect>>();
 //流程干预组件
@@ -175,7 +176,7 @@ const handleSelectionChange = (selection: any) => {
   single.value = selection.length !== 1;
   multiple.value = !selection.length;
 };
-const changeTab = async (data: string) => {
+const changeTab = async (data: TabsPaneContext) => {
   taskList.value = [];
   queryParams.value.pageNum = 1;
   if ('waiting' === data.paneName) {

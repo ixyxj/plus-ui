@@ -59,74 +59,66 @@
               <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
             </el-row>
           </template>
-
-          <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" align="center" />
-            <el-table-column align="center" prop="id" label="主键" v-if="false"></el-table-column>
-            <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="flowCode" label="标识KEY" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="version" label="版本号" width="80">
-              <template #default="scope"> v{{ scope.row.version }}.0</template>
-            </el-table-column>
-            <el-table-column align="center" prop="activityStatus" label="激活状态" width="130">
-              <template #default="scope">
-                <el-switch
-                  v-model="scope.row.activityStatus"
-                  :active-value="1"
-                  :inactive-value="0"
-                  @change="(status) => handleProcessDefState(scope.row, status)"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
-              <template #default="scope">
-                <el-tag v-if="scope.row.isPublish == 0" type="danger">未发布</el-tag>
-                <el-tag v-else-if="scope.row.isPublish == 1" type="success">已发布</el-tag>
-                <el-tag v-else type="danger">失效</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" align="center" width="245" class-name="small-padding fixed-width">
-              <template #default="scope">
-                <el-row :gutter="10" class="mb8">
-                  <el-col :span="1.5">
-                    <el-button
-                      link
-                      type="primary"
-                      size="small"
-                      icon="Document"
-                      @click="getProcessDefinitionHitoryList(scope.row.id, scope.row.flowCode)"
-                    >
-                      历史版本
-                    </el-button>
-                  </el-col>
-                  <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除流程</el-button>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="10" class="mb8">
-                  <el-col :span="1.5">
-                    <el-button link type="primary" v-if="scope.row.isPublish === 0" icon="Pointer" size="small" @click="design(scope.row)"
-                      >流程设计</el-button
-                    >
-                    <el-button link type="primary" v-else icon="View" size="small" @click="designView(scope.row)">查看流程</el-button>
-                  </el-col>
-                  <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
-                    <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
-                  </el-col>
-                  <el-col :span="1.5">
-                    <el-button link type="primary" size="small" icon="CopyDocument" @click="handleCopyDef(scope.row)">复制流程</el-button>
-                  </el-col>
-                </el-row>
-              </template>
-            </el-table-column>
-          </el-table>
-          <pagination
-            v-show="total > 0"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            :total="total"
-            @pagination="getList"
-          />
+          <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+            <el-tab-pane label="流程定义" name="0"></el-tab-pane>
+            <el-tab-pane label="未发布" name="1"></el-tab-pane>
+            <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center" />
+              <el-table-column align="center" prop="id" label="主键" v-if="false"></el-table-column>
+              <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
+              <el-table-column align="center" prop="flowCode" label="标识KEY" :show-overflow-tooltip="true"></el-table-column>
+              <el-table-column align="center" prop="version" label="版本号" width="80">
+                <template #default="scope"> v{{ scope.row.version }}.0</template>
+              </el-table-column>
+              <el-table-column align="center" prop="activityStatus" label="激活状态" width="130">
+                <template #default="scope">
+                  <el-switch
+                    v-model="scope.row.activityStatus"
+                    :active-value="1"
+                    :inactive-value="0"
+                    @change="(status) => handleProcessDefState(scope.row, status)"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
+                <template #default="scope">
+                  <el-tag v-if="scope.row.isPublish == 0" type="danger">未发布</el-tag>
+                  <el-tag v-else-if="scope.row.isPublish == 1" type="success">已发布</el-tag>
+                  <el-tag v-else type="danger">失效</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column fixed="right" label="操作" align="center" width="170" class-name="small-padding fixed-width">
+                <template #default="scope">
+                  <el-row :gutter="10" class="mb8">
+                    <el-col :span="1.5">
+                      <el-button link type="primary" size="small" icon="Delete" @click="handleDelete(scope.row)">删除流程</el-button>
+                    </el-col>
+                    <el-col :span="1.5">
+                      <el-button link type="primary" size="small" icon="CopyDocument" @click="handleCopyDef(scope.row)">复制流程</el-button>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="10" class="mb8">
+                    <el-col :span="1.5">
+                      <el-button link type="primary" v-if="scope.row.isPublish === 0" icon="Pointer" size="small" @click="design(scope.row)"
+                        >流程设计</el-button
+                      >
+                      <el-button link type="primary" v-else icon="View" size="small" @click="designView(scope.row)">查看流程</el-button>
+                    </el-col>
+                    <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
+                      <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
+                    </el-col>
+                  </el-row>
+                </template>
+              </el-table-column>
+            </el-table>
+            <pagination
+              v-show="total > 0"
+              v-model:page="queryParams.pageNum"
+              v-model:limit="queryParams.pageSize"
+              :total="total"
+              @pagination="handleQuery"
+            />
+          </el-tabs>
         </el-card>
       </el-col>
     </el-row>
@@ -161,55 +153,6 @@
           <div class="el-upload__text">PS:如若部署请部署从本项目模型管理导出的数据</div>
         </el-upload>
       </div>
-    </el-dialog>
-
-    <!-- 历史版本 -->
-    <el-dialog v-if="processDefinitionDialog.visible" v-model="processDefinitionDialog.visible" :title="processDefinitionDialog.title" width="70%">
-      <el-table v-loading="loading" border :data="processDefinitionHistoryList">
-        <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
-        <el-table-column align="center" prop="flowName" label="流程定义名称" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column align="center" prop="flowCode" label="标识KEY"></el-table-column>
-        <el-table-column align="center" prop="version" label="版本号" width="90">
-          <template #default="scope"> v{{ scope.row.version }}.0</template>
-        </el-table-column>
-        <el-table-column align="center" prop="activityStatus" label="激活状态" width="130">
-          <template #default="scope">
-            <el-switch
-              v-model="scope.row.activityStatus"
-              :active-value="1"
-              :inactive-value="0"
-              @change="(status) => handleProcessDefState(scope.row, status)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column align="center" prop="isPublish" label="发布状态" width="100">
-          <template #default="scope">
-            <el-tag v-if="scope.row.isPublish == 0" type="danger">未发布</el-tag>
-            <el-tag v-else-if="scope.row.isPublish == 1" type="success">已发布</el-tag>
-            <el-tag v-else type="danger">失效</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="245" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-row :gutter="10" class="mb8">
-              <el-col :span="1.5">
-                <el-button link type="primary" icon="Delete" size="small" @click="handleDelete(scope.row)">删除流程</el-button>
-              </el-col>
-              <el-col v-if="scope.row.isPublish === 0" :span="1.5">
-                <el-button link type="primary" icon="Pointer" size="small" @click="design(scope.row)">流程设计</el-button>
-              </el-col>
-            </el-row>
-            <el-row :gutter="10" class="mb8">
-              <el-col :span="1.5">
-                <el-button link type="primary" size="small" icon="CopyDocument" @click="handleCopyDef(scope.row)">复制流程</el-button>
-              </el-col>
-              <el-col v-if="scope.row.isPublish !== 1" :span="1.5">
-                <el-button link type="primary" size="small" icon="CircleCheck" @click="handlePublish(scope.row)">发布流程</el-button>
-              </el-col>
-            </el-row>
-          </template>
-        </el-table-column>
-      </el-table>
     </el-dialog>
 
     <!-- 新增/编辑流程定义 -->
@@ -248,11 +191,11 @@
 </template>
 
 <script lang="ts" setup name="processDefinition">
-import { listDefinition, deleteDefinition, active, importDef, getHisListByKey, publish, add, edit, getInfo, copy } from '@/api/workflow/definition';
+import { listDefinition, deleteDefinition, active, importDef, unPublishList, publish, add, edit, getInfo, copy } from '@/api/workflow/definition';
 import { categoryTree } from '@/api/workflow/category';
 import { CategoryTreeVO } from '@/api/workflow/category/types';
 import { FlowDefinitionQuery, FlowDefinitionVo, FlowDefinitionForm } from '@/api/workflow/definition/types';
-import { UploadRequestOptions } from 'element-plus';
+import { UploadRequestOptions, TabsPaneContext } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -268,13 +211,12 @@ const showSearch = ref(true);
 const total = ref(0);
 const uploadDialogLoading = ref(false);
 const processDefinitionList = ref<FlowDefinitionVo[]>([]);
-const processDefinitionHistoryList = ref<FlowDefinitionVo[]>([]);
 const categoryOptions = ref<CategoryTreeVO[]>([]);
 const categoryName = ref('');
 /** 部署文件分类选择 */
 const selectCategory = ref();
 const defFormRef = ref<ElFormInstance>();
-
+const activeName = ref('0');
 const uploadDialog = reactive<DialogOption>({
   visible: false,
   title: '部署流程文件'
@@ -319,7 +261,7 @@ const form = ref<FlowDefinitionForm>({
   formPath: ''
 });
 onMounted(() => {
-  getList();
+  handleQuery();
   getTreeselect();
 });
 
@@ -351,11 +293,17 @@ const getTreeselect = async () => {
   const res = await categoryTree();
   categoryOptions.value = res.data;
 };
-
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  handleQuery();
+};
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-  getList();
+  if (activeName.value === '1') {
+    getList();
+  } else {
+    getUnPublishList();
+  }
 };
 /** 重置按钮操作 */
 const resetQuery = () => {
@@ -380,14 +328,12 @@ const getList = async () => {
   total.value = resp.total;
   loading.value = false;
 };
-//获取历史流程定义
-const getProcessDefinitionHitoryList = async (id: string, key: string) => {
-  processDefinitionDialog.visible = true;
+//查询未发布的流程定义列表
+const getUnPublishList = async () => {
   loading.value = true;
-  const resp = await getHisListByKey(key);
-  if (resp.data && resp.data.length > 0) {
-    processDefinitionHistoryList.value = resp.data.filter((item: any) => item.id !== id);
-  }
+  const resp = await unPublishList(queryParams.value);
+  processDefinitionList.value = resp.rows;
+  total.value = resp.total;
   loading.value = false;
 };
 
@@ -398,7 +344,7 @@ const handleDelete = async (row?: FlowDefinitionVo) => {
   await proxy?.$modal.confirm('是否确认删除流程定义KEY为【' + defList + '】的数据项？');
   loading.value = true;
   await deleteDefinition(id).finally(() => (loading.value = false));
-  await getList();
+  await handleQuery();
   proxy?.$modal.msgSuccess('删除成功');
 };
 
@@ -410,7 +356,7 @@ const handlePublish = async (row?: FlowDefinitionVo) => {
   loading.value = true;
   await publish(row.id).finally(() => (loading.value = false));
   processDefinitionDialog.visible = false;
-  await getList();
+  await handleQuery();
   proxy?.$modal.msgSuccess('发布成功');
 };
 /** 挂起/激活 */
@@ -425,7 +371,7 @@ const handleProcessDefState = async (row: FlowDefinitionVo, status: number | str
     loading.value = true;
     await proxy?.$modal.confirm(msg);
     await active(row.id, !!status);
-    await getList();
+    await handleQuery();
     proxy?.$modal.msgSuccess('操作成功');
   } catch (error) {
     row.activityStatus = status === 0 ? 1 : 0;
@@ -519,7 +465,7 @@ const handleSubmit = async () => {
       form.value.id ? await edit(form.value) : await add(form.value);
       proxy?.$modal.msgSuccess('操作成功');
       modelDialog.visible = false;
-      getList();
+      handleQuery();
     }
   });
 };
@@ -533,7 +479,7 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
     copy(row.id).then((resp) => {
       if (resp.code === 200) {
         proxy?.$modal.msgSuccess('操作成功');
-        getList();
+        handleQuery();
       }
     });
   });

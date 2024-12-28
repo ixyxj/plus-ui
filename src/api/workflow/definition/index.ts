@@ -16,14 +16,15 @@ export const listDefinition = (query: FlowDefinitionQuery): AxiosPromise<FlowDef
 };
 
 /**
- * 按照流程定义key获取流程定义
- * @param flowCode 流程编码
+ * 查询未发布的流程定义列表
+ * @param query 流程实例id
  * @returns
  */
-export const getHisListByKey = (flowCode: string) => {
+export const unPublishList = (query: FlowDefinitionQuery): AxiosPromise<FlowDefinitionVo[]> => {
   return request({
-    url: `/workflow/definition/getHisListByKey/${flowCode}`,
-    method: 'get'
+    url: `/workflow/definition/unPublishList`,
+    method: 'get',
+    params: query
   });
 };
 
