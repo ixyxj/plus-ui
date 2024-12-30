@@ -294,12 +294,14 @@ const getTreeselect = async () => {
   categoryOptions.value = res.data;
 };
 const handleClick = (tab: TabsPaneContext, event: Event) => {
+  // v-model处理有延迟 需要手动处理
+  activeName.value = tab.index;
   handleQuery();
 };
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-  if (activeName.value === '1') {
+  if (activeName.value === '0') {
     getList();
   } else {
     getUnPublishList();
