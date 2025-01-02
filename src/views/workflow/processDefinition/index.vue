@@ -487,6 +487,7 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
     copy(row.id).then((resp) => {
       if (resp.code === 200) {
         proxy?.$modal.msgSuccess('操作成功');
+        activeName.value = "1"
         handleQuery();
       }
     }).finally(() => loading.value = false);
