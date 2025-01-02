@@ -60,7 +60,7 @@
             </el-row>
           </template>
           <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-            <el-tab-pane label="流程定义" name="0"></el-tab-pane>
+            <el-tab-pane label="已发布" name="0"></el-tab-pane>
             <el-tab-pane label="未发布" name="1"></el-tab-pane>
             <el-table v-loading="loading" border :data="processDefinitionList" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55" align="center" />
@@ -464,7 +464,12 @@ const handleUpdate = async (row?: FlowDefinitionVo) => {
 const handleSubmit = async () => {
   defFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      form.value.id ? await edit(form.value) : await add(form.value);
+      loading.value = true;
+      if (form.value.id) {
+        await edit(form.value).finally(() => loading.value = false);
+      } else {
+        await add(form.value).finally(() => loading.value = false);
+      }
       proxy?.$modal.msgSuccess('操作成功');
       modelDialog.visible = false;
       handleQuery();
@@ -478,12 +483,13 @@ const handleCopyDef = async (row: FlowDefinitionVo) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
+    loading.value = true;
     copy(row.id).then((resp) => {
       if (resp.code === 200) {
         proxy?.$modal.msgSuccess('操作成功');
         handleQuery();
       }
-    });
+    }).finally(() => loading.value = false);
   });
 };
 
